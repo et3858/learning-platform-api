@@ -26,6 +26,11 @@ app.use(sassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Bootstrap 5 dependencies
+app.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')));
+app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')));
+// app.use('/js', express.static(path.join(_dirname, 'node_modules/jquery/dist')));
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
