@@ -1,4 +1,5 @@
 //Keep the meals data inside of an Array (in Real World this would be saved in a database)
+// Source: https://medium.com/@ipenywis/what-is-the-mvc-creating-a-node-js-express-mvc-application-da10625a4eda
 const users = [
     { id: 1, name: "MilkShake", type: "breakfast", price: 8 },
     { id: 2, name: "Lazanya", type: "lunch", price: 20 }
