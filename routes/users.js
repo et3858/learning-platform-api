@@ -1,13 +1,17 @@
-var UserController = require('../controllers/user.controller');
+var UserController = require("../controllers/user.controller");
 
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
 router
-    .get('/', UserController.index)
-    .post('/', UserController.store)
-    .get('/:id', UserController.show)
-    .put('/:id', UserController.update)
-    .delete('/:id', UserController.destroy);
+    .route("/")
+    .get(UserController.index)
+    .post(UserController.store);
+
+router
+    .route("/:id")
+    .get(UserController.show)
+    .put(UserController.update)
+    .delete(UserController.destroy);
 
 module.exports = router;
