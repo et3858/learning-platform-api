@@ -1,4 +1,3 @@
-// const UserModel = require("../models/user.model");
 const User = require("../models/user.model.db");
 
 const UserController = {
@@ -11,6 +10,7 @@ const UserController = {
     store: ((req, res) => {
         var user = new User({
             name: req.body.name,
+            email: req.body.email,
         });
 
         user.save(function (err, user) {
@@ -40,6 +40,7 @@ const UserController = {
             }
 
             user.name = req.body.name;
+            user.email = req.body.email;
 
             user.save(function (err) {
                 if (err) return res.status(500).send(err.message);
