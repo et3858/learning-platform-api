@@ -1,6 +1,6 @@
 // Source: https://www.freecodecamp.org/news/how-to-make-input-validation-simple-and-clean-in-your-express-js-app-ea9b5ff5a8a7/
 
-const { body } = require("express-validator");
+const { body, query } = require("express-validator");
 const validation = require("../services/validations");
 
 const User = require("../models/user.model.db");
@@ -24,6 +24,22 @@ function emailAlreadyExists(email, { req }) {
     });
 }
 
+exports.beforeIndex = [
+    query("name")
+        .optional()
+        .trim()
+        .not().isEmpty()
+        .withMessage("name must not be empty"),
+    query("email")
+        .optional()
+        .trim()
+        .not().isEmpty()
+        .withMessage("email must not be empty")
+        .isEmail()
+        .withMessage("not a valid email"),
+    validation
+];
+
 exports.beforeStore = [
     body("name", "name is required")
         .exists()
@@ -36,7 +52,7 @@ exports.beforeStore = [
         .not().isEmpty()
         .withMessage("email must not be empty")
         .isEmail()
-        .withMessage("email format is incorrect")
+        .withMessage("not a valid email")
         .custom(emailAlreadyExists),
     validation
 ];
@@ -53,7 +69,7 @@ exports.beforeUpdate = [
         .not().isEmpty()
         .withMessage("email must not be empty")
         .isEmail()
-        .withMessage("email format is incorrect")
+        .withMessage("not a valid email")
         .custom(emailAlreadyExists),
     validation
 ];

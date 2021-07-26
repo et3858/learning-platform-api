@@ -6,7 +6,7 @@ var router = express.Router();
 
 router
     .route("/")
-    .get(UserController.index)
+    .get(UserMiddleware.beforeIndex, UserController.index)
     .post(UserMiddleware.beforeStore, UserController.store);
 
 router
