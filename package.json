@@ -13,6 +13,7 @@
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "express-validator": "^6.12.1",
+    "faker": "^5.5.3",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "mocha": "^9.0.2",
