@@ -8,13 +8,9 @@ const UserController = {
         });
     }),
     store: ((req, res) => {
-        var user = new User({
-            name: req.body.name,
-            email: req.body.email,
-        });
-
-        user.save(function (err, user) {
+        User.create(req.body, (err, user) => {
             if (err) return res.status(500).send(err.message);
+
             res.status(200).jsonp(user);
         });
     }),
@@ -30,38 +26,20 @@ const UserController = {
         });
     }),
     update: ((req, res) => {
-        User.findById(req.params.id, function(err, user) {
+        User.findByIdAndUpdate(req.params.id, req.body, { new: true }, (err, user) => {
+            // NOTE: '{ new: true }' returns the updated document (user) inside the callback
+            // Source: https://davidburgos.blog/return-updated-document-mongoose/
+
             if (err) return res.status(500).send(err.message);
 
-            // Stop the process if user doesn't exist
-            if (!user) {
-                res.send();
-                return;
-            }
-
-            user.name = req.body.name;
-            user.email = req.body.email;
-
-            user.save(function (err) {
-                if (err) return res.status(500).send(err.message);
-                res.status(200).jsonp(user);
-            });
-        });
+            res.status(200).jsonp(user);
+        }).orFail();
     }),
     destroy: ((req, res) => {
-        User.findById(req.params.id, function (err, user) {
+        User.findByIdAndDelete(req.params.id, (err) => {
             if (err) return res.status(500).send(err.message);
 
-            // Stop the process if user doesn't exist
-            if (!user) {
-                res.send();
-                return;
-            }
-
-            user.remove(function (err) {
-                if (err) return res.status(500).send(err.message);
-                res.status(200).send();
-            });
+            res.status(200).send();
         });
     })
 };

@@ -22,9 +22,11 @@ var UserSchema = new Schema({
     }
 });
 
-UserSchema.pre("save", function (next) {
+UserSchema.pre("findOneAndUpdate", function (next) {
+    // Help source: https://stackoverflow.com/a/44616254
+
     // Update to current datetime before saving
-    this.updated_at = new Date();
+    this._update.updated_at = new Date();
     next();
 });
 
