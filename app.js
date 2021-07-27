@@ -7,6 +7,7 @@ var sassMiddleware = require('node-sass-middleware');
 var mongoose = require("mongoose");
 
 var indexRouter = require('./routes/index');
+var coursesRouter = require('./routes/courses');
 var usersRouter = require('./routes/users');
 
 var app = express();
@@ -33,6 +34,7 @@ app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/
 // app.use('/js', express.static(path.join(_dirname, 'node_modules/jquery/dist')));
 
 app.use('/', indexRouter);
+app.use('/courses', coursesRouter);
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
