@@ -5,6 +5,15 @@ const validation = require("../services/validations");
 
 const User = require("../models/user.model.db");
 
+/**
+ * Returns a list of possible regex keywords to search by name.
+ * @param   string name
+ * @returns object
+ */
+function nameKeywords(name) {
+    return { $in: name.replace(/\s+/g, " ").split(" ").map(keyword => new RegExp(keyword, "i")) };
+    // Source: https://stackoverflow.com/a/53026977
+}
 
 /**
  * Check if email is already in use by a user.
@@ -15,7 +24,7 @@ const User = require("../models/user.model.db");
  */
 function emailAlreadyExists(email, { req }) {
     return User.findOne({
-        email,
+        email: new RegExp(email, "i"),
         _id: { $ne: req.params.id }
     }).then(user => {
         if (user !== null) {
@@ -29,14 +38,16 @@ exports.beforeIndex = [
         .optional()
         .trim()
         .not().isEmpty()
-        .withMessage("name must not be empty"),
+        .withMessage("name must not be empty")
+        .customSanitizer(nameKeywords),
     query("email")
         .optional()
         .trim()
         .not().isEmpty()
         .withMessage("email must not be empty")
         .isEmail()
-        .withMessage("not a valid email"),
+        .withMessage("not a valid email")
+        .toLowerCase(),
     validation
 ];
 
@@ -53,7 +64,8 @@ exports.beforeStore = [
         .withMessage("email must not be empty")
         .isEmail()
         .withMessage("not a valid email")
-        .custom(emailAlreadyExists),
+        .custom(emailAlreadyExists)
+        .toLowerCase(),
     validation
 ];
 
@@ -70,6 +82,7 @@ exports.beforeUpdate = [
         .withMessage("email must not be empty")
         .isEmail()
         .withMessage("not a valid email")
-        .custom(emailAlreadyExists),
+        .custom(emailAlreadyExists)
+        .toLowerCase(),
     validation
 ];
