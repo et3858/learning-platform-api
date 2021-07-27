@@ -3,7 +3,7 @@
 const { body, query } = require("express-validator");
 const validation = require("../services/validations");
 
-const User = require("../models/user.model.db");
+const User = require("../models/user.model");
 
 /**
  * Returns a list of possible regex keywords to search by name.

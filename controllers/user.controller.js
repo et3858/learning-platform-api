@@ -1,4 +1,4 @@
-const User = require("../models/user.model.db");
+const User = require("../models/user.model");
 
 const UserController = {
     index: ((req, res) => {
