@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+var deepPopulate = require("mongoose-deep-populate")(mongoose);
 var Schema = mongoose.Schema;
 
 var CategorySchema = new Schema({
@@ -16,5 +17,6 @@ var CategorySchema = new Schema({
         default: Date.now
     }
 });
+CategorySchema.plugin(deepPopulate);
 
 module.exports = mongoose.model("Category", CategorySchema);

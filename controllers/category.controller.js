@@ -9,12 +9,13 @@ const CategoryController = {
         const { populate_with, select_only, ...query } = req.query;
 
         Category
-            .find(query, (err, category) => {
+            .find(query)
+            .deepPopulate(populate_with)
+            .select(select_only)
+            .exec((err, categories) => {
                 if (err) return res.send(500, err.message);
-                res.status(200).jsonp(category);
-            })
-            .populate(populate_with)
-            .select(select_only);
+                res.status(200).jsonp(categories);
+            });
     })
 };
 
