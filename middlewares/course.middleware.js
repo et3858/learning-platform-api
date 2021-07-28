@@ -5,10 +5,12 @@ const validation = require("../services/validations");
 
 exports.beforeIndex = [
     query("populate_with").trim(),
+    query("select_only").trim(),
     validation
 ];
 
 exports.beforeShow = [
     query("populate_with").trim(),
+    query("select_only").trim(),
     validation
 ];
