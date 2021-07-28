@@ -7,6 +7,7 @@ var sassMiddleware = require('node-sass-middleware');
 var mongoose = require("mongoose");
 
 var indexRouter = require('./routes/index');
+var categoriesRouter = require('./routes/categories');
 var coursesRouter = require('./routes/courses');
 var usersRouter = require('./routes/users');
 
@@ -34,6 +35,7 @@ app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/
 // app.use('/js', express.static(path.join(_dirname, 'node_modules/jquery/dist')));
 
 app.use('/', indexRouter);
+app.use('/categories', categoriesRouter);
 app.use('/courses', coursesRouter);
 app.use('/users', usersRouter);
 
