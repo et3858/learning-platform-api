@@ -1,15 +1,16 @@
 var CourseController = require("../controllers/course.controller");
+var CourseMiddleware = require("../middlewares/course.middleware");
 
 var express = require("express");
 var router = express.Router();
 
 router
     .route("/")
-    .get(CourseController.index);
+    .get(CourseMiddleware.beforeIndex, CourseController.index);
 
 router
     .route("/:courseSlug")
-    .get(CourseController.getCourseBySlug);
+    .get(CourseMiddleware.beforeShow, CourseController.getCourseBySlug);
 
 router
     .route("/:courseSlug/:lessonSlug")
