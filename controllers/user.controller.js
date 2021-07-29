@@ -1,4 +1,4 @@
-const User = require("../models/user.model");
+const User = include("models/user.model");
 
 const UserController = {
     index: ((req, res) => {

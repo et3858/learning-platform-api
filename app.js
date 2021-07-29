@@ -6,6 +6,16 @@ var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
 var mongoose = require("mongoose");
 
+/**
+ * Creates a global helper that returns a relative path for a required custom module of the app.
+ * Sources of help:
+ * - https://www.coreycleary.me/escaping-relative-path-hell
+ * - https://kenichishibata.medium.com/3-ways-to-fix-relative-paths-in-nodejs-require-ffc7f89bd7e1
+ * @param   string path
+ * @returns object [require]
+ */
+global.include = path => require(__dirname + "/" + path);
+
 var indexRouter = require('./routes/index');
 var categoriesRouter = require('./routes/categories');
 var coursesRouter = require('./routes/courses');

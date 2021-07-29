@@ -1,5 +1,4 @@
-const Category = require("../models/category.model");
-const Course = require("../models/course.model");
+const Category = include("models/category.model");
 
 const CategoryController = {
     index: ((req, res) => {

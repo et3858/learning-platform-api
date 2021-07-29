@@ -1,5 +1,5 @@
-var UserController = require("../controllers/user.controller");
-var UserMiddleware = require("../middlewares/user.middleware");
+var UserController = include("controllers/user.controller");
+var UserMiddleware = include("middlewares/user.middleware");
 
 var express = require("express");
 var router = express.Router();

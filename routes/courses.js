@@ -1,5 +1,5 @@
-var CourseController = require("../controllers/course.controller");
-var CourseMiddleware = require("../middlewares/course.middleware");
+var CourseController = include("controllers/course.controller");
+var CourseMiddleware = include("middlewares/course.middleware");
 
 var express = require("express");
 var router = express.Router();

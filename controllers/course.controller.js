@@ -1,5 +1,5 @@
-const Course = require("../models/course.model");
-const Lesson = require("../models/lesson.model");
+const Course = include("models/course.model");
+const Lesson = include("models/lesson.model");
 
 const CourseController = {
     index: ((req, res) => {
