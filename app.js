@@ -16,8 +16,8 @@ var mongoose = require("mongoose");
  */
 global.include = path => require(__dirname + "/" + path);
 
-var indexRouter = require("./routes/index");
 var apiRouter = require("./routes/api");
+var webRouter = require("./routes/web");
 
 var app = express();
 
@@ -43,7 +43,7 @@ app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/
 // app.use('/js', express.static(path.join(_dirname, 'node_modules/jquery/dist')));
 
 // Defining 'web' and 'api' routes
-app.use('/', indexRouter);
+app.use('/', webRouter);
 app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler
