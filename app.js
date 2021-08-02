@@ -5,6 +5,9 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
 var mongoose = require("mongoose");
+const dotenv = require('dotenv');
+
+dotenv.config(); // Read the '.env' file
 
 /**
  * Creates a global helper that returns a relative path for a required custom module of the app.
@@ -52,13 +55,15 @@ app.use(function(req, res, next) {
 });
 
 
-
-
-var mongoDB = "mongodb://127.0.0.1:27017/mi-proyecto";
-// var mongoDB = "mongodb://localhost/mi-proyecto";
+const db_url = [
+  process.env.DB_CONNECTION + "://",
+  process.env.DB_HOST + ":",
+  process.env.DB_PORT + "/",
+  process.env.DB_NAME
+].join("");
 
 // DBs using MongoDB
-mongoose.connect(mongoDB);
+mongoose.connect(db_url);
 mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
