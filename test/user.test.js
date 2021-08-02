@@ -1,6 +1,14 @@
 var assert = require('assert');
+var chai = require("chai");
+var chaiHttp = require("chai-http");
+// const app = require("../app");
 const dbHandler = require("./db_handler");
 const User = require("../models/user.model");
+
+chai.use(chaiHttp);
+
+// Set environment to "test" for avoiding clear the database for development or production
+process.env.NODE_ENV = "test";
 
 // Connect to a new in-memory database before running any tests.
 before(async () => await dbHandler.connect());
@@ -100,6 +108,24 @@ describe("User", () => {
                 if (err) assert(false);
                 assert(deletedUser === null);
             });
+        });
+    });
+
+
+    describe("Api", () => {
+        // NOTE: it works when server is turned on
+        it("Getting a 200 HTTP Code", () => {
+            chai
+                .request("http://localhost:3000")
+                .get("/api/users")
+                .end((err, res) => {
+                    if (err) {
+                        console.error(err);
+                        assert(false);
+                    }
+                    // console.log(res);
+                    assert(true);
+                });
         });
     });
 });
