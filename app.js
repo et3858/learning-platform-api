@@ -9,6 +9,10 @@ const dotenv = require('dotenv');
 
 dotenv.config(); // Read the '.env' file
 
+// Get the environment config.
+// ! This line MUST be initialized after 'dotenv.config()' for recognizing the variables from '.env' file
+const config = require("./config");
+
 /**
  * Creates a global helper that returns a relative path for a required custom module of the app.
  * Sources of help:
@@ -56,10 +60,10 @@ app.use(function(req, res, next) {
 
 
 const db_url = [
-  process.env.DB_CONNECTION + "://",
-  process.env.DB_HOST + ":",
-  process.env.DB_PORT + "/",
-  process.env.DB_NAME
+  config.database.connection + "://",
+  config.database.host + ":",
+  config.database.port + "/",
+  config.database.db
 ].join("");
 
 // DBs using MongoDB
