@@ -12,6 +12,10 @@ var UserSchema = new Schema({
         required: true,
         unique: true
     },
+    courses: [{
+        type: Schema.Types.ObjectId,
+        ref: "Course"
+    }],
     created_at: {
         type: Date,
         default: Date.now
