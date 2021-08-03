@@ -27,6 +27,10 @@ module.exports.closeDatabase = async () => {
 
 // Clear the DB and remove all data
 module.exports.clearDatabase = async () => {
+    if (process.env.NODE_ENV !== "test") {
+        throw new Error("Attempt to clear non testing database!");
+    }
+
     const collections = mongoose.connection.collections;
     for (const key in collections) {
         const collection = collections[key];
