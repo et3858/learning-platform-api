@@ -4,14 +4,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
-var mongoose = require("mongoose");
 const dotenv = require('dotenv');
 
 dotenv.config(); // Read the '.env' file
 
-// Get the environment config.
+// Get the database config.
 // ! This line MUST be initialized after 'dotenv.config()' for recognizing the variables from '.env' file
-const config = require("./config");
+const database = require("./database");
 
 /**
  * Creates a global helper that returns a relative path for a required custom module of the app.
@@ -58,21 +57,8 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-
-const db_url = [
-  config.database.connection + "://",
-  config.database.host + ":",
-  config.database.port + "/",
-  config.database.db
-].join("");
-
-// DBs using MongoDB
-mongoose.connect(db_url);
-mongoose.Promise = global.Promise;
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
-
+// Connecting to a database using MongoDB
+database.connect();
 
 // error handler
 app.use(function(err, req, res, next) {

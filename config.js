@@ -1,3 +1,6 @@
+const dotenv = require("dotenv");
+dotenv.config(); // Read the '.env' file
+
 const env = process.env.NODE_ENV || "development";
 
 const config = {
