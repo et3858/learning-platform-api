@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Module dependencies.
-var app = require("./app");
+var app = require("./src/app");
 var debug = require('debug')('mi-proyecto:server');
 var http = require('http');
 

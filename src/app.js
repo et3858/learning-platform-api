@@ -36,17 +36,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(sassMiddleware({
-  src: path.join(__dirname, 'public'),
-  dest: path.join(__dirname, 'public'),
+  src: path.join('./', 'public'),
+  dest: path.join('./', 'public'),
   indentedSyntax: true, // true = .sass and false = .scss
   sourceMap: true
 }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join('./', 'public')));
+
 
 // Bootstrap 5 dependencies
-app.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')));
-app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')));
-// app.use('/js', express.static(path.join(_dirname, 'node_modules/jquery/dist')));
+app.use('/css', express.static(path.join('./', 'node_modules/bootstrap/dist/css')));
+app.use('/js', express.static(path.join('./', 'node_modules/bootstrap/dist/js')));
+// app.use('/js', express.static(path.join('./', 'node_modules/jquery/dist')));
 
 // Defining 'web' and 'api' routes
 app.use('/', webRouter);

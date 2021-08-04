@@ -7,9 +7,9 @@ var chai = require("chai");
 var chaiHttp = require("chai-http");
 let should = chai.should();
 // const dbHandler = require("./db_handler");
-const User = require("../models/user.model");
+const User = require("../src/models/user.model");
 
-const server = require("../app");
+const server = require("../src/app");
 chai.use(chaiHttp);
 
 // Help source: https://stackoverflow.com/a/65223900
