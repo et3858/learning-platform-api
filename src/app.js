@@ -59,7 +59,9 @@ app.use(function(req, res, next) {
 });
 
 // Connecting to a database using MongoDB
-database.connect();
+if (process.env.NODE_ENV !== "test") {
+  database.connect();
+}
 
 // error handler
 app.use(function(err, req, res, next) {

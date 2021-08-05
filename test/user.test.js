@@ -6,24 +6,24 @@ let faker = require("faker");
 var chai = require("chai");
 var chaiHttp = require("chai-http");
 let should = chai.should();
-// const dbHandler = require("./db_handler");
+const dbHandler = require("./db_handler");
 const User = require("../src/models/user.model");
 
 const server = require("../src/app");
 chai.use(chaiHttp);
 
 // Help source: https://stackoverflow.com/a/65223900
-const requester = chai.request(server).keepOpen();
+// const requester = chai.request(server).keepOpen();
 
 
 // Connect to a new in-memory database before running any tests.
-// before(async () => await dbHandler.connect());
+before(async () => await dbHandler.connect());
 
 // Clear all test data after every test.
-// afterEach(async () => await dbHandler.clearDatabase());
+afterEach(async () => await dbHandler.clearDatabase());
 
 // Remove and close the db and server.
-// after(async () => await dbHandler.closeDatabase());
+after(async () => await dbHandler.closeDatabase());
 
 // Fuente: https://mochajs.org/
 
@@ -45,9 +45,6 @@ const requester = chai.request(server).keepOpen();
 
 describe("User", () => {
     describe("Model", () => {
-        // Clear all test data after every test.
-        afterEach(async () => await User.deleteMany({}));
-
         it("Get all users", async () => {
             let user = new User({
                 name: "foo",
@@ -120,16 +117,13 @@ describe("User", () => {
     });
 
 
-    describe("Api", () => {
-        // Clear all test data after every test.
-        afterEach(async () => {
-            await User.deleteMany({});
-        });
-
+    describe("API", () => {
         describe("GET route /users", () => {
             // NOTE: it works when server is turned on
             it("Getting a 200 HTTP Code", (done) => {
-                requester
+                // requester
+                chai
+                    .request(server)
                     .get("/api/users")
                     .end((err, res) => {
                         if (err) {
@@ -151,7 +145,9 @@ describe("User", () => {
                     email: faker.internet.email() // Kassandra.Haley@erich.biz
                 };
 
-                requester
+                // requester
+                chai
+                    .request(server)
                     .post("/api/users")
                     .send(user)
                     .end((err, res) => {
@@ -182,7 +178,9 @@ describe("User", () => {
                 user.save((err, newUser) => {
                     // console.log("New user", newUser);
 
-                    requester
+                    // requester
+                    chai
+                        .request(server)
                         .get("/api/users/" + newUser._id)
                         .end((err, res) => {
                             if (err) {
@@ -214,7 +212,9 @@ describe("User", () => {
                         email: faker.internet.email() // Lupe.Kunze@yahoo.com
                     };
 
-                    requester
+                    // requester
+                    chai
+                        .request(server)
                         .put("/api/users/" + newUser._id)
                         .send(updatedData)
                         .end((err, res) => {
@@ -240,7 +240,9 @@ describe("User", () => {
 
                 let user = new User(data);
                 user.save((err, newUser) => {
-                    requester
+                    // requester
+                    chai
+                        .request(server)
                         .delete("/api/users/" + newUser._id)
                         .end((err, res) => {
                             if (err) {
