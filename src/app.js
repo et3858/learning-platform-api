@@ -10,7 +10,7 @@ dotenv.config(); // Read the '.env' file
 
 // Get the database config.
 // ! This line MUST be initialized after 'dotenv.config()' for recognizing the variables from '.env' file
-const database = require("./database");
+const database = require("./config/database");
 
 /**
  * Creates a global helper that returns a relative path for a required custom module of the app.
