@@ -47,8 +47,10 @@ describe("User", () => {
     describe("Model", () => {
         it("Get all users", async () => {
             let user = new User({
-                name: "foo",
-                email: "bar@baz.com"
+                name: faker.name.findName(), // Rowan Nikolaus
+                username: faker.internet.userName(), // afuentes
+                password: faker.internet.password(), // 123abc
+                email: faker.internet.email() // Kassandra.Haley@erich.biz
             });
             await user.save();
 
@@ -59,8 +61,10 @@ describe("User", () => {
 
         it("Add a new user without any errors", () => {
             let body = {
-                name: "foo",
-                email: "bar@baz.com"
+                name: faker.name.findName(), // Rowan Nikolaus
+                username: faker.internet.userName(), // afuentes
+                password: faker.internet.password(), // 123abc
+                email: faker.internet.email() // Kassandra.Haley@erich.biz
             };
 
             User.create(body, (err, user) => {
@@ -71,8 +75,10 @@ describe("User", () => {
 
         it("Get the existing user", async () => {
             let user = new User();
-            user.name = "foo";
-            user.email = "bar@baz.com";
+            user.name = faker.name.findName(); // Rowan Nikolaus
+            user.username = faker.internet.userName(); // afuentes
+            user.password = faker.internet.password(); // 123abc
+            user.email = faker.internet.email(); // Kassandra.Haley@erich.biz
             await user.save();
 
             User.findById(user._id, (err, searchedUser) => {
@@ -83,8 +89,10 @@ describe("User", () => {
 
         it("Change the user's name and email", async () => {
             let user = new User();
-            user.name = "foo";
-            user.email = "bar@baz.com";
+            user.name = faker.name.findName(); // Rowan Nikolaus
+            user.username = faker.internet.userName(); // afuentes
+            user.password = faker.internet.password(); // 123abc
+            user.email = faker.internet.email(); // Kassandra.Haley@erich.biz
             await user.save();
 
             user.name = "fizz";
@@ -100,8 +108,10 @@ describe("User", () => {
 
         it("Remove a user", async () => {
             let user = new User();
-            user.name = "foo";
-            user.email = "bar@baz.com";
+            user.name = faker.name.findName(); // Rowan Nikolaus
+            user.username = faker.internet.userName(); // afuentes
+            user.password = faker.internet.password(); // 123abc
+            user.email = faker.internet.email(); // Kassandra.Haley@erich.biz
 
             // Save the new user
             await user.save();
@@ -142,6 +152,8 @@ describe("User", () => {
             it("Creating a right new user", (done) => {
                 let user = {
                     name: faker.name.findName(), // Rowan Nikolaus
+                    username: faker.internet.userName(), // afuentes
+                    password: faker.internet.password(), // 123abc
                     email: faker.internet.email() // Kassandra.Haley@erich.biz
                 };
 
@@ -171,6 +183,8 @@ describe("User", () => {
             it("Getting an existing user", (done) => {
                 let data = {
                     name: faker.name.findName(), // Rowan Nikolaus
+                    username: faker.internet.userName(), // afuentes
+                    password: faker.internet.password(), // 123abc
                     email: faker.internet.email() // Kassandra.Haley@erich.biz
                 };
 
@@ -202,6 +216,8 @@ describe("User", () => {
             it("Updating a user", (done) => {
                 let data = {
                     name: faker.name.findName(), // Rowan Nikolaus
+                    username: faker.internet.userName(), // afuentes
+                    password: faker.internet.password(), // 123abc
                     email: faker.internet.email() // Kassandra.Haley@erich.biz
                 };
 
@@ -235,6 +251,8 @@ describe("User", () => {
             it("Deleting a user", (done) => {
                 let data = {
                     name: faker.name.findName(), // Rowan Nikolaus
+                    username: faker.internet.userName(), // afuentes
+                    password: faker.internet.password(), // 123abc
                     email: faker.internet.email() // Kassandra.Haley@erich.biz
                 };
 

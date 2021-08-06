@@ -5,7 +5,16 @@ var UserSchema = new Schema({
     name: {
         type: String,
         required: true,
+    },
+    username: {
+        type: String,
+        required: true,
+        unique: true,
         max: 100
+    },
+    password: {
+        type: String,
+        required: true
     },
     email: {
         type: String,

@@ -57,6 +57,15 @@ exports.beforeStore = [
         .trim()
         .not().isEmpty()
         .withMessage("name must not be empty"),
+    body("username", "username is required")
+        .exists()
+        .trim()
+        .not().isEmpty()
+        .withMessage("username must not be empty"),
+    body("password", "password is required")
+        .exists()
+        .not().isEmpty()
+        .withMessage("password must not be empty"),
     body("email", "email is required")
         .exists()
         .trim()
@@ -75,6 +84,15 @@ exports.beforeUpdate = [
         .trim()
         .not().isEmpty()
         .withMessage("name must not be empty"),
+    body("username")
+        .optional()
+        .trim()
+        .not().isEmpty()
+        .withMessage("username must not be empty"),
+    body("password")
+        .optional()
+        .not().isEmpty()
+        .withMessage("password must not be empty"),
     body("email")
         .optional()
         .trim()
