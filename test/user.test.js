@@ -73,6 +73,29 @@ describe("User", () => {
             });
         });
 
+        it("Add a new user and compare password", (done) => {
+            let body = {
+                name: faker.name.findName(), // Rowan Nikolaus
+                username: faker.internet.userName(), // afuentes
+                password: faker.internet.password(), // 123abc
+                email: faker.internet.email() // Kassandra.Haley@erich.biz
+            };
+
+            User.create(body, (err, user) => {
+                if (err) {
+                    done(err);
+                }
+                // user.passwordComparison("feru", (err, res) => {
+                user.passwordComparison(body.password, (err, res) => {
+                    if (err || !res) {
+                        done(err);
+                    }
+
+                    done()
+                });
+            });
+        });
+
         it("Get the existing user", async () => {
             let user = new User();
             user.name = faker.name.findName(); // Rowan Nikolaus
