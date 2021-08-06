@@ -176,6 +176,34 @@ describe("User", () => {
                         done();
                     });
             });
+
+            it("Creating a user using whitespace(s) in a password", (done) => {
+                // Source: https://www.infosecmatter.com/spaces-in-passwords-good-or-a-bad-idea/
+
+                let user = {
+                    name: faker.name.findName(), // Rowan Nikolaus
+                    username: faker.internet.userName(), // afuentes
+                    password: "      ",
+                    email: faker.internet.email() // Kassandra.Haley@erich.biz
+                };
+
+                // requester
+                chai
+                    .request(server)
+                    .post("/api/users")
+                    .send(user)
+                    .end((err, res) => {
+                        if (err) {
+                            console.error(err);
+                            assert(false);
+                        }
+
+                        res.should.have.status(200);
+                        res.body.should.be.a("object");
+                        res.body.should.not.have.property("errors");
+                        done();
+                    });
+            });
         });
 
         describe("GET route /users/:id", () => {
@@ -212,7 +240,6 @@ describe("User", () => {
         });
 
         describe("PUT route /users/:id", () => {
-            // NOTE: it works when server is turned on
             it("Updating a user", (done) => {
                 let data = {
                     name: faker.name.findName(), // Rowan Nikolaus
@@ -244,6 +271,42 @@ describe("User", () => {
                         });
                 });
             });
+
+            it("Updating a user's password using whitespace(s)", (done) => {
+                // Source: https://www.infosecmatter.com/spaces-in-passwords-good-or-a-bad-idea/
+
+                let data = {
+                    name: faker.name.findName(), // Rowan Nikolaus
+                    username: faker.internet.userName(), // afuentes
+                    password: faker.internet.password(), // 123abc
+                    email: faker.internet.email() // Kassandra.Haley@erich.biz
+                };
+
+                let user = new User(data);
+                user.save((err, newUser) => {
+                    let updatedData = {
+                        password: "     ",
+                    };
+
+                    // requester
+                    chai
+                        .request(server)
+                        .put("/api/users/" + newUser._id)
+                        .send(updatedData)
+                        .end((err, res) => {
+                            if (err) {
+                                console.error(err);
+                                assert(false);
+                            }
+
+                            res.should.have.status(200);
+                            res.body.should.be.a("object");
+                            res.body.should.not.have.property("errors");
+                            done();
+                        });
+                });
+            });
+
         });
 
         describe("DELETE route /users/:id", () => {
