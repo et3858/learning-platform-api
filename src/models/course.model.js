@@ -3,7 +3,8 @@ var Schema = mongoose.Schema;
 
 var CourseSchema = new Schema({
     name: String,
-    description: String,
+    excerpt: String,
+    content: String,
     slug: String,
     release_date: Date,
     category: {
