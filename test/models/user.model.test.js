@@ -107,6 +107,8 @@ describe("User Model", () => {
             expect(updatedUser).to.be.an("object");
             expect(updatedUser.name).to.equal(newName).not.equal(body.name);
             expect(updatedUser.email).to.equal(newEmail).not.equal(body.email);
+
+            expect(updatedUser.updated_at.valueOf()).to.be.above(updatedUser.created_at.valueOf())
         });
     });
 

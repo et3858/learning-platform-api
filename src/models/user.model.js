@@ -47,6 +47,9 @@ UserSchema.pre("findOneAndUpdate", function (next) {
 UserSchema.pre("save", function (next) {
     let user = this;
 
+    // Update to current datetime before saving
+    user.updated_at = new Date();
+
     // Only hash the password if it has been modified (or is new)
     // Help source: https://stackoverflow.com/a/14595363
     if (!user.isModified("password")) return next();
