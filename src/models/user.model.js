@@ -26,6 +26,10 @@ var UserSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Course"
     }],
+    notes: [{
+        type: Schema.Types.ObjectId,
+        ref: "Note"
+    }],
     created_at: {
         type: Date,
         default: Date.now
