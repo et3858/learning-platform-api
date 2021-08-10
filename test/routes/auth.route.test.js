@@ -183,6 +183,157 @@ describe("Auth Routes", () => {
             });
         });
     });
+
+    describe("GET route /show", () => {
+        let user;
+        let token;
+
+        beforeEach((done) => {
+            body = {
+                name: faker.name.findName(), // Rowan Nikolaus
+                username: faker.internet.userName(), // afuentes
+                password: faker.internet.password(), // 123abc
+                email: faker.internet.email() // Kassandra.Haley@erich.biz
+            };
+
+            user = new User(body);
+            user.save((err) => {
+                if (err) done(err);
+
+                // requester
+                chai
+                    .request(server)
+                    .post(`${endpoint}/login`)
+                    .send({
+                        username: user.username,
+                        password: body.password
+                    })
+                    .end((err, res) => {
+                        if (err) done(err);
+                        token = res.body.token;
+
+                        // res.should.have.status(200);
+                        done();
+                    });
+            });
+        });
+
+        it("Verify authenticated user", (done) => {
+            let newToken = `Bearer ${token}`;
+
+            // requester
+            chai
+                .request(server)
+                .get(`${endpoint}/show`)
+                .set("authorization", newToken)
+                .end((err, res) => {
+                    if (err) done(err);
+
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+
+        it("SHOULD NOT pass user without a token", (done) => {
+            // requester
+            chai
+                .request(server)
+                .get(`${endpoint}/show`)
+                .end((err, res) => {
+                    if (err) done(err);
+                    res.should.have.status(403);
+                    res.body.should.have.property("errors");
+                    res.body.errors.should.be.an("array");
+                    res.body.errors.should.include.deep.members([{
+                        msg: "a token is required for authentication",
+                        param: "authorization",
+                        location: "headers"
+                    }]);
+                    done();
+                });
+        });
+
+        describe("Bad tokens", () => {
+            let tokenRequiredMsg = "a token is required for authentication";
+            let invalidTokenMsg = "invalid token";
+            let tests = [
+                {
+                    token: "",
+                    status: 403,
+                    msg: tokenRequiredMsg
+                },
+                {
+                    token: " foobar ",
+                    status: 403,
+                    msg: tokenRequiredMsg
+                },
+                {
+                    token: "Bearer",
+                    status: 403,
+                    msg: tokenRequiredMsg
+                },
+                {
+                    token: "BEARER",
+                    status: 403,
+                    msg: tokenRequiredMsg
+                },
+                {
+                    token: "bearer",
+                    status: 403,
+                    msg: tokenRequiredMsg
+                },
+                {
+                    token: "BeArEr",
+                    status: 403,
+                    msg: tokenRequiredMsg
+                },
+                {
+                    token: "Bearer ",
+                    status: 403,
+                    msg: tokenRequiredMsg
+                },
+                {
+                    token: " Bearer",
+                    status: 403,
+                    msg: tokenRequiredMsg
+                },
+                {
+                    token: "Bearer foobar",
+                    status: 401,
+                    msg: invalidTokenMsg
+                },
+                {
+                    token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+                    status: 401,
+                    msg: invalidTokenMsg
+                }
+            ];
+
+            tests.forEach(({ token, status, msg }) => {
+                it(`SHOULD NOT pass user with a bad or invalid token format: "${token}"`, (done) => {
+                    // requester
+                    chai
+                        .request(server)
+                        .get(`${endpoint}/show`)
+                        .set("authorization", token)
+                        .end((err, res) => {
+                            if (err) done(err);
+
+                            res.should.have.status(status);
+                            res.body.should.have.property("errors");
+                            res.body.errors.should.be.an("array");
+                            res.body.errors.should.include.deep.members([{
+                                value: token.trim(),
+                                msg,
+                                param: "authorization",
+                                location: "headers"
+                            }]);
+                            done();
+                        });
+                });
+            });
+        });
+    });
 });
 
 
