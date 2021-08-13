@@ -33,19 +33,6 @@ function validate(status) {
     }
 }
 
-exports.beforeLogin = [
-    body("username", "username is required")
-        .exists()
-        .trim()
-        .not().isEmpty()
-        .withMessage("username must not be empty"),
-    body("password", "password is required")
-        .exists()
-        .not().isEmpty()
-        .withMessage("password must not be empty"),
-    validation
-];
-
 const verifyToken = [
     header("authorization", "a token is required for authentication")
         .exists()
@@ -60,6 +47,19 @@ const validateToken = [
         .custom(isTokenVerified)
         .withMessage("invalid token"),
     validate(401)
+];
+
+exports.beforeLogin = [
+    body("username", "username is required")
+        .exists()
+        .trim()
+        .not().isEmpty()
+        .withMessage("username must not be empty"),
+    body("password", "password is required")
+        .exists()
+        .not().isEmpty()
+        .withMessage("password must not be empty"),
+    validation
 ];
 
 exports.checkToken = [verifyToken, validateToken];

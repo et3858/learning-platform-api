@@ -127,8 +127,8 @@ describe("Auth Routes", () => {
                 .end((err, res) => {
                     if (err) done(err);
 
-                    res.should.have.status(404);
-                    res.text.should.equal("user not found");
+                    res.should.have.status(401);
+                    res.text.should.equal("unauthenticated user or password");
                     done();
                 });
         });
@@ -152,7 +152,7 @@ describe("Auth Routes", () => {
                         if (err) done(err);
 
                         res.should.have.status(401);
-                        res.text.should.equal("unauthenticated user");
+                        res.text.should.equal("unauthenticated user or password");
                         done();
                     });
             });

@@ -9,12 +9,12 @@ const AuthController = {
         User.findOne(body, (err, user) => {
             if (err) return res.status(500).send(err.message);
 
-            if (!user) return res.status(404).send("user not found");
+            if (!user) return res.status(401).send("unauthenticated user or password");
 
             user.passwordComparison(password, (err, isMatch) => {
                 if (err) return res.status(500).send(err.message);
 
-                if (!isMatch) return res.status(401).send("unauthenticated user");
+                if (!isMatch) return res.status(401).send("unauthenticated user or password");
 
                 let jwtUser = (({ _id, email, name, username }) => ({ _id, email, name, username }))(user);
 
