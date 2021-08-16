@@ -154,11 +154,8 @@ describe("User Routes", () => {
                 .post(endpoint)
                 .send(body)
                 .end((err, res) => {
-                    if (err) {
-                        console.error(err);
-                        assert(false);
-                    }
-                    // console.log(res.body);
+                    if (err) done(err);
+
                     res.should.have.status(200);
                     res.body.should.be.a("object");
                     res.body.should.not.have.property("errors");
@@ -180,14 +177,32 @@ describe("User Routes", () => {
                 .post(endpoint)
                 .send(body)
                 .end((err, res) => {
-                    if (err) {
-                        console.error(err);
-                        assert(false);
-                    }
+                    if (err) done(err);
 
                     res.should.have.status(200);
                     res.body.should.be.a("object");
                     res.body.should.not.have.property("errors");
+                    done();
+                });
+        });
+
+        it("SHOULD get error 422 if there aren't all required parameters", (done) => {
+            // requester
+            chai
+                .request(server)
+                .post(endpoint)
+                .end((err, res) => {
+                    if (err) done(err);
+
+                    res.should.have.status(422);
+                    res.body.should.have.property("errors");
+                    res.body.errors.should.be.an("array");
+                    res.body.errors.should.include.deep.members([
+                        { msg: "name is required", param: "name", location: "body" },
+                        { msg: "email is required", param: "email", location: "body" },
+                        { msg: "username is required", param: "username", location: "body" },
+                        { msg: "password is required", param: "password", location: "body" },
+                    ]);
                     done();
                 });
         });
@@ -213,6 +228,63 @@ describe("User Routes", () => {
                         res.body._id.toString().should.equal(newUser._id.toString());
                         done();
                     });
+            });
+        });
+
+        it("Getting a non existing user", (done) => {
+            let fakeID = "0123456789abcdef01234567"
+
+            // requester
+            chai
+                .request(server)
+                .get(endpoint + "/" + fakeID)
+                .end((err, res) => {
+                    if (err) done(err);
+
+                    res.should.have.status(200);
+                    (res.body === null).should.be.true;
+                    done();
+                });
+        });
+
+        describe("Bad ID params", () => {
+            let tests = [
+                "a",
+                "1",
+                "abc",
+                "xyz",
+                "123",
+                "0123456789abcdef0123456g",
+                "0123456789abcdef0123456",
+                "0123456789abcdef0123456 ",
+                " 0123456789abcdef0123456",
+                "0123456789abcdefghijklmn",
+                "ghijklmnopqrstuvwxyz0123",
+                "0123456789abcdef012345678",
+                "0123456789abcdef0123456",
+            ];
+
+            tests.forEach(fakeID => {
+                it(`SHOULD have error 422 if 'id' param is not valid: "${fakeID}"`, (done) => {
+                    // requester
+                    chai
+                        .request(server)
+                        .get(endpoint + "/" + fakeID)
+                        .end((err, res) => {
+                            if (err) done(err);
+
+                            res.should.have.status(422);
+                            res.body.should.have.property("errors");
+                            res.body.errors.should.be.an("array");
+                            res.body.errors.should.include.deep.members([{
+                                value: fakeID.trimEnd(),
+                                msg: "not a valid id",
+                                param: "id",
+                                location: "params"
+                            }]);
+                            done();
+                        });
+                });
             });
         });
     });
