@@ -41,6 +41,19 @@ describe("User Routes", () => {
     });
 
     describe("GET route /users", () => {
+        it("Get no users", (done) => {
+            // requester
+            chai
+                .request(server)
+                .get(endpoint)
+                .end((err, res) => {
+                    if (err) done(err);
+                    res.should.have.status(200);
+                    res.body.should.be.an("array").that.is.empty;
+                    done();
+                });
+        });
+
         it("Get all users", (done) => {
             let user = new User(body);
             user.save((err) => {
@@ -52,11 +65,83 @@ describe("User Routes", () => {
                     .get(endpoint)
                     .end((err, res) => {
                         if (err) done(err);
+
                         res.should.have.status(200);
                         res.body.should.be.an("array");
                         res.body.length.should.be.above(0);
+                        res.body.every(
+                            u => u.should.include.all.keys("name", "username", "email").but.not.have.all.keys("password")
+                        );
+                        // Help source: https://github.com/chaijs/chai/issues/410#issuecomment-344967338
+
                         done();
                     });
+            });
+        });
+
+        it("SHOULD have error 422 if name field is empty", (done) => {
+            // requester
+            chai
+                .request(server)
+                .get(endpoint)
+                .query({ name: "" })
+                .end((err, res) => {
+                    if (err) done(err);
+
+                    res.should.have.status(422);
+                    res.body.should.have.property("errors");
+                    res.body.errors.should.be.an("array");
+                    res.body.errors.should.include.deep.members([{
+                        value: "",
+                        msg: "name must not be empty",
+                        param: "name",
+                        location: "query"
+                    }]);
+                    done();
+                });
+        });
+
+        describe("Bad emails", () => {
+            let notEmptyMsg = "email must not be empty";
+            let notValidMsg = "not a valid email";
+
+            let tests = [
+                { email: "", msg: notEmptyMsg },
+                { email: "     ", msg: notEmptyMsg },
+                { email: "foo", msg: notValidMsg },
+                { email: "foo bar", msg: notValidMsg },
+                { email: "foo@bar", msg: notValidMsg },
+                { email: "foo.bar", msg: notValidMsg },
+                { email: "foo.bar@baz", msg: notValidMsg },
+                { email: "foo@bar,baz", msg: notValidMsg },
+                { email: "foo@bar:baz", msg: notValidMsg },
+                { email: "foo@bar..baz", msg: notValidMsg },
+                { email: "<foo@bar.baz>", msg: notValidMsg },
+            ];
+
+            tests.forEach(({ email, msg }) => {
+                it(`SHOULD have error 422 if email field is "${email}"`, (done) => {
+                    // requester
+                    chai
+                        .request(server)
+                        .get(endpoint)
+                        .query({ email })
+                        .end((err, res) => {
+                            if (err) done(err);
+
+                            res.should.have.status(422);
+                            res.body.should.have.property("errors");
+                            res.body.errors.should.be.an("array");
+                            res.body.errors.should.include.deep.members([{
+                                value: email.trim(),
+                                msg: msg,
+                                param: "email",
+                                location: "query"
+                            }]);
+
+                            done();
+                        });
+                });
             });
         });
     });
@@ -112,6 +197,8 @@ describe("User Routes", () => {
         it("Getting an existing user", (done) => {
             let user = new User(body);
             user.save((err, newUser) => {
+                if (err) done(err);
+
                 // requester
                 chai
                     .request(server)
@@ -122,6 +209,7 @@ describe("User Routes", () => {
                         res.should.have.status(200);
                         res.body.should.not.be.a("null");
                         res.body.should.be.an("object");
+                        res.body.should.include.all.keys("_id", "name", "username", "email").but.not.have.all.keys("password")
                         res.body._id.toString().should.equal(newUser._id.toString());
                         done();
                     });
