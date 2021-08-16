@@ -93,4 +93,15 @@ UserSchema.methods.passwordComparison = function(inputPassword, cb) {
     });
 };
 
+/**
+ * Hide some fields of the instance before returning to the client as a JSON format.
+ * Help source: https://contactsunny.medium.com/hide-properties-of-mongoose-objects-in-node-js-json-responses-a5437a5dbec2
+ * @returns object
+ */
+UserSchema.methods.toJSON = function () {
+    let user = this.toObject();
+    delete user.password;
+    return user;
+};
+
 module.exports = mongoose.model("User", UserSchema);
