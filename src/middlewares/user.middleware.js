@@ -1,6 +1,6 @@
 // Source: https://www.freecodecamp.org/news/how-to-make-input-validation-simple-and-clean-in-your-express-js-app-ea9b5ff5a8a7/
 
-const { body, query } = require("express-validator");
+const { body, param, query } = require("express-validator");
 const validation = include("services/validations");
 
 const User = include("models/user.model");
@@ -32,6 +32,13 @@ function emailAlreadyExists(email, { req }) {
         }
     });
 }
+
+exports.validateIdParam = [
+    param("id")
+        .isMongoId() // NOTE: this method applies a 'trimEnd()' on the param.
+        .withMessage("not a valid id"),
+    validation
+];
 
 exports.beforeIndex = [
     query("name")

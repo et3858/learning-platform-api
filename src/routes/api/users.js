@@ -11,8 +11,8 @@ router
 
 router
     .route("/:id")
-    .get(UserController.show)
-    .put(UserMiddleware.beforeUpdate, UserController.update)
-    .delete(UserController.destroy);
+    .get(UserMiddleware.validateIdParam, UserController.show)
+    .put([UserMiddleware.validateIdParam, UserMiddleware.beforeUpdate], UserController.update)
+    .delete(UserMiddleware.validateIdParam, UserController.destroy);
 
 module.exports = router;
