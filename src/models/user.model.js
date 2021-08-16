@@ -40,6 +40,29 @@ var UserSchema = new Schema({
     }
 });
 
+/**
+ * Convert the user's password into a hash
+ * @param   object   user [Model's instance]
+ * @param   function next
+ * @returns function
+ */
+function hashPassword(user, next) {
+    // Only hash the password if it has been modified (or is new)
+    // Help source: https://stackoverflow.com/a/14595363
+    if (!user.isModified("password")) return next();
+
+    bcrypt
+        .hash(user.password, 10)
+        .then(hash => {
+            user.password = hash;
+            next();
+        })
+        .catch(err => {
+            console.log(`Error in hashing password: ${err.message}`);
+            next(err);
+        });
+}
+
 UserSchema.pre("findOneAndUpdate", function (next) {
     // Help source: https://stackoverflow.com/a/44616254
 
@@ -53,20 +76,7 @@ UserSchema.pre("save", function (next) {
 
     // Update to current datetime before saving
     user.updated_at = new Date();
-
-    // Only hash the password if it has been modified (or is new)
-    // Help source: https://stackoverflow.com/a/14595363
-    if (!user.isModified("password")) return next();
-    bcrypt
-        .hash(user.password, 10)
-        .then(hash => {
-            user.password = hash;
-            next();
-        })
-        .catch(err => {
-            console.log(`Error in hashing password: ${err.message}`);
-            next(err);
-        });
+    hashPassword(user, next);
 });
 
 /**
