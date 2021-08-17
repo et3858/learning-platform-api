@@ -29,7 +29,7 @@ const UserController = {
             if (err) return res.status(500).send(err.message);
 
             res.status(200).jsonp(user);
-        }).orFail();
+        });
     }),
     destroy: ((req, res) => {
         User.findByIdAndDelete(req.params.id, (err) => {

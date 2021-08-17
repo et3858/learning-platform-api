@@ -390,6 +390,22 @@ describe("User Routes", () => {
             });
         });
 
+        it("SHOULD get 'null' when updating a non existing user", (done) => {
+            let fakeID = "0123456789abcdef01234567";
+
+            // requester
+            chai
+                .request(server)
+                .put(endpoint + "/" + fakeID)
+                .end((err, res) => {
+                    if (err) done(err);
+
+                    res.should.have.status(200);
+                    (res.body === null).should.be.true;
+                    done();
+                });
+        });
+
         it("SHOULD get error 422 if username and/or email are already in use", (done) => {
             User.insertMany([getUserBody(), getUserBody()], (err, users) => {
                 if (err) done(err);
