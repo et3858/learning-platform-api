@@ -16,6 +16,18 @@ chai.use(chaiHttp);
 // const requester = chai.request(server).keepOpen();
 
 
+
+
+function getUserBody() {
+    return {
+        name: faker.name.findName(), // Rowan Nikolaus
+        username: faker.internet.userName(), // afuentes
+        password: faker.internet.password(), // 123abc
+        email: faker.internet.email() // Kassandra.Haley@erich.biz
+    };
+}
+
+
 // Connect to a new in-memory database before running any tests.
 before(async () => await dbHandler.connect());
 
@@ -31,14 +43,7 @@ describe("User Routes", () => {
     let body;
     let endpoint = "/api/users";
 
-    beforeEach(() => {
-        body = {
-            name: faker.name.findName(), // Rowan Nikolaus
-            username: faker.internet.userName(), // afuentes
-            password: faker.internet.password(), // 123abc
-            email: faker.internet.email() // Kassandra.Haley@erich.biz
-        };
-    });
+    beforeEach(() => body = getUserBody());
 
     describe("GET route /users", () => {
         it("Get no users", (done) => {
@@ -206,6 +211,46 @@ describe("User Routes", () => {
                     done();
                 });
         });
+
+        it("SHOULD get error 422 if username and/or email are already in use", (done) => {
+            let user = new User(body);
+            user.save((err) => {
+                if (err) done(err);
+
+                let updatedBody = {
+                    email: user.email,
+                    username: user.username,
+                };
+
+                // requester
+                chai
+                    .request(server)
+                    .post(endpoint)
+                    .send(updatedBody)
+                    .end((err, res) => {
+                        if (err) done(err);
+
+                        res.should.have.status(422);
+                        res.body.should.have.property("errors");
+                        res.body.errors.should.be.an("array");
+                        res.body.errors.should.include.deep.members([
+                            {
+                                value: updatedBody.email,
+                                msg: "email already in use",
+                                param: "email",
+                                location: "body"
+                            },
+                            {
+                                value: updatedBody.username,
+                                msg: "username already in use",
+                                param: "username",
+                                location: "body"
+                            },
+                        ]);
+                        done();
+                    });
+            });
+        });
     });
 
     describe("GET route /users/:id", () => {
@@ -297,6 +342,7 @@ describe("User Routes", () => {
 
                 let updatedBody = {
                     name: faker.name.findName(), // Ricardo Lang
+                    username: faker.internet.userName(), // Ricardo Lang
                     email: faker.internet.email() // Lupe.Kunze@yahoo.com
                 };
 
@@ -346,6 +392,47 @@ describe("User Routes", () => {
             });
         });
 
+        it("SHOULD get error 422 if username and/or email are already in use", (done) => {
+            User.insertMany([getUserBody(), getUserBody()], (err, users) => {
+                if (err) done(err);
+
+                let user1 = users[0];
+                let user2 = users[1];
+
+                let updatedBody = {
+                    username: user1.username,
+                    email: user1.email
+                };
+
+                // requester
+                chai
+                    .request(server)
+                    .put(endpoint + "/" + user2._id)
+                    .send(updatedBody)
+                    .end((err, res) => {
+                        if (err) done(err);
+
+                        res.should.have.status(422);
+                        res.body.should.have.property("errors");
+                        res.body.errors.should.be.an("array");
+                        res.body.errors.should.include.deep.members([
+                            {
+                                value: updatedBody.email,
+                                msg: "email already in use",
+                                param: "email",
+                                location: "body"
+                            },
+                            {
+                                value: updatedBody.username,
+                                msg: "username already in use",
+                                param: "username",
+                                location: "body"
+                            },
+                        ]);
+                        done();
+                    });
+            });
+        });
     });
 
     describe("DELETE route /users/:id", () => {

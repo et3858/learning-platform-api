@@ -16,6 +16,32 @@ function nameKeywords(name) {
 }
 
 /**
+ * Check if a user already exists by conditions.
+ * @param   object conditions
+ * @param   string feedback
+ * @returns object [Promise]
+ */
+function userAlreadyExists(conditions, feedback) {
+    return User.findOne(conditions).then(user => {
+        if (user !== null) return Promise.reject(feedback);
+    });
+}
+
+/**
+ * Check if username is already in use by a user.
+ * Source of this method: https://stackoverflow.com/q/59764397
+ * @param   string username
+ * @param   object param1
+ * @returns object [Promise]
+ */
+function usernameAlreadyExists(username, { req }) {
+    return userAlreadyExists({
+        username: new RegExp(username, "i"),
+        _id: { $ne: req.params.id }
+    }, "username already in use");
+}
+
+/**
  * Check if email is already in use by a user.
  * Source of this method: https://stackoverflow.com/q/59764397
  * @param   string email
@@ -23,14 +49,10 @@ function nameKeywords(name) {
  * @returns object [Promise]
  */
 function emailAlreadyExists(email, { req }) {
-    return User.findOne({
+    return userAlreadyExists({
         email: new RegExp(email, "i"),
         _id: { $ne: req.params.id }
-    }).then(user => {
-        if (user !== null) {
-            return Promise.reject("email already in use");
-        }
-    });
+    }, "email already in use");
 }
 
 exports.validateIdParam = [
@@ -68,7 +90,8 @@ exports.beforeStore = [
         .exists()
         .trim()
         .not().isEmpty()
-        .withMessage("username must not be empty"),
+        .withMessage("username must not be empty")
+        .custom(usernameAlreadyExists),
     body("password", "password is required")
         .exists()
         .not().isEmpty()
@@ -95,7 +118,8 @@ exports.beforeUpdate = [
         .optional()
         .trim()
         .not().isEmpty()
-        .withMessage("username must not be empty"),
+        .withMessage("username must not be empty")
+        .custom(usernameAlreadyExists),
     body("password")
         .optional()
         .not().isEmpty()
