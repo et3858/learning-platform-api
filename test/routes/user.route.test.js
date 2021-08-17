@@ -190,6 +190,30 @@ describe("User Routes", () => {
                 });
         });
 
+        it("SHOULD get error 422 when sending an '_id' field inside the request", (done) => {
+            let fakeID = "0123456789abcdef01234567";
+
+            // requester
+            chai
+                .request(server)
+                .post(endpoint)
+                .send({ _id: fakeID })
+                .end((err, res) => {
+                    if (err) done(err);
+
+                    res.should.have.status(422);
+                    res.body.should.have.property("errors");
+                    res.body.errors.should.be.an("array");
+                    res.body.errors.should.include.deep.members([{
+                        value: fakeID,
+                        msg: "id field must not be included",
+                        param: "_id",
+                        location: "body"
+                    }]);
+                    done();
+                });
+        });
+
         it("SHOULD get error 422 if there aren't all required parameters", (done) => {
             // requester
             chai
@@ -404,6 +428,33 @@ describe("User Routes", () => {
                     (res.body === null).should.be.true;
                     done();
                 });
+        });
+
+        it("SHOULD get error 422 when sending an '_id' field inside the request", (done) => {
+            let user = new User(body);
+            user.save((err, newUser) => {
+                if (err) done(err);
+
+                // requester
+                chai
+                    .request(server)
+                    .put(endpoint + "/" + newUser._id)
+                    .send({ _id: newUser._id })
+                    .end((err, res) => {
+                        if (err) done(err);
+
+                        res.should.have.status(422);
+                        res.body.should.have.property("errors");
+                        res.body.errors.should.be.an("array");
+                        res.body.errors.should.include.deep.members([{
+                            value: newUser._id.toString(),
+                            msg: "id field must not be included",
+                            param: "_id",
+                            location: "body"
+                        }]);
+                        done();
+                    });
+            });
         });
 
         it("SHOULD get error 422 if username and/or email are already in use", (done) => {
