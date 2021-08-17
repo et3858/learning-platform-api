@@ -64,10 +64,11 @@ function hashPassword(user, next) {
 }
 
 UserSchema.pre("findOneAndUpdate", function (next) {
-    // Help source: https://stackoverflow.com/a/44616254
-
-    // Update to current datetime before saving
-    this._update.updated_at = new Date();
+    if (typeof this._update !== "undefined") {
+        // Update to current datetime before saving
+        // Help source: https://stackoverflow.com/a/44616254
+        this._update.updated_at = new Date();
+    }
     next();
 });
 
