@@ -1,7 +1,6 @@
 // Set environment to "test" for avoiding clear the database for development or production
 process.env.NODE_ENV = "test";
 
-var assert = require('assert');
 let faker = require("faker");
 var chai = require("chai");
 var chaiHttp = require("chai-http");
@@ -269,7 +268,7 @@ describe("User Routes", () => {
                         res.should.have.status(200);
                         res.body.should.not.be.a("null");
                         res.body.should.be.an("object");
-                        res.body.should.include.all.keys("_id", "name", "username", "email").but.not.have.all.keys("password")
+                        res.body.should.include.all.keys("_id", "name", "username", "email").but.not.have.all.keys("password");
                         res.body._id.toString().should.equal(newUser._id.toString());
                         done();
                     });
@@ -277,7 +276,7 @@ describe("User Routes", () => {
         });
 
         it("Getting a non existing user", (done) => {
-            let fakeID = "0123456789abcdef01234567"
+            let fakeID = "0123456789abcdef01234567";
 
             // requester
             chai
@@ -355,10 +354,9 @@ describe("User Routes", () => {
                         if (err) done(err);
 
                         res.should.have.status(200);
-                        res.body.should.be.an("object");
-                        res.body.should.have.property("name");
-                        res.body.should.have.property("email");
+                        res.body.should.include.all.keys("_id", "name", "username", "email").but.not.have.all.keys("password");
                         res.body.name.should.equal(updatedBody.name).not.equal(newUser.name);
+                        res.body.username.should.equal(updatedBody.username).not.equal(newUser.username);
                         res.body.email.should.equal(updatedBody.email.toLowerCase()).not.equal(newUser.email);
                         done();
                     });
@@ -449,6 +447,7 @@ describe("User Routes", () => {
                         if (err) done(err);
 
                         res.should.have.status(200);
+                        res.body.should.be.empty;
                         done();
                     });
             });
