@@ -190,6 +190,21 @@ describe("User Routes", () => {
                 });
         });
 
+        it("SHOULD get error 404 when adding a parameter", (done) => {
+            // requester
+            chai
+                .request(server)
+                .post(endpoint + "/lorem")
+                .send(body)
+                .end((err, res) => {
+                    if (err) done(err);
+
+                    res.should.have.status(404);
+                    res.text.should.include("Not Found");
+                    done();
+                });
+        });
+
         it("SHOULD get error 422 when sending an '_id' field inside the request", (done) => {
             let fakeID = "0123456789abcdef01234567";
 
@@ -414,6 +429,20 @@ describe("User Routes", () => {
             });
         });
 
+        it("SHOULD get error 404 when not adding a parameter", (done) => {
+            // requester
+            chai
+                .request(server)
+                .put(endpoint)
+                .end((err, res) => {
+                    if (err) done(err);
+
+                    res.should.have.status(404);
+                    res.text.should.include("Not Found");
+                    done();
+                });
+        });
+
         it("SHOULD get 'null' when updating a non existing user", (done) => {
             let fakeID = "0123456789abcdef01234567";
 
@@ -518,6 +547,20 @@ describe("User Routes", () => {
                         done();
                     });
             });
+        });
+
+        it("SHOULD get error 404 when not adding a parameter", (done) => {
+            // requester
+            chai
+                .request(server)
+                .delete(endpoint)
+                .end((err, res) => {
+                    if (err) done(err);
+
+                    res.should.have.status(404);
+                    res.text.should.include("Not Found");
+                    done();
+                });
         });
     });
 });
