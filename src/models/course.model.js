@@ -21,7 +21,8 @@ var CourseSchema = new Schema({
     },
     created_at: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        immutable: true
     },
     updated_at: {
         type: Date,
