@@ -20,12 +20,4 @@ var CategorySchema = new Schema({
 });
 CategorySchema.plugin(deepPopulate);
 
-CategorySchema.pre("validate", function (next) {
-    // This hook prevents of adding an arbitrary value to the 'created_at' field when creating a new document
-    if (this.isModified("created_at")) {
-        this.created_at = new Date();
-    }
-    next();
-});
-
 module.exports = mongoose.model("Category", CategorySchema);
