@@ -1,5 +1,5 @@
+const Hash = require("../services/hash");
 var mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
 var Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
@@ -42,7 +42,7 @@ var UserSchema = new Schema({
 });
 
 /**
- * Convert the user's password into a hash
+ * Convert the user's password into a hash.
  * @param   object   user [Model's instance]
  * @param   function next
  * @returns function
@@ -52,16 +52,15 @@ function hashPassword(user, next) {
     // Help source: https://stackoverflow.com/a/14595363
     if (!user.isModified("password")) return next();
 
-    bcrypt
-        .hash(user.password, 10)
-        .then(hash => {
-            user.password = hash;
-            next();
-        })
-        .catch(err => {
+    Hash.make(user.password, (err, hash) => {
+        if (err) {
             console.log(`Error in hashing password: ${err.message}`);
-            next(err);
-        });
+            return next(err.message);
+        }
+
+        user.password = hash;
+        next();
+    });
 }
 
 UserSchema.pre("findOneAndUpdate", function (next) {
@@ -87,17 +86,13 @@ UserSchema.pre("save", function (next) {
 });
 
 /**
- * Returns a Promise function
+ * Compares a password with a user's hashed password.
  * @param   string   inputPassword
+ * @param   function callback
  * @returns function
  */
-UserSchema.methods.passwordComparison = function(inputPassword, cb) {
-    let user = this;
-
-    bcrypt.compare(inputPassword, user.password, function (err, isMatch) {
-        if (err) return cb(err);
-        cb(null, isMatch);
-    });
+UserSchema.methods.passwordComparison = function (inputPassword, callback) {
+    return Hash.compare(inputPassword, this.password, callback);
 };
 
 /**
