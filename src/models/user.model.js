@@ -41,28 +41,6 @@ var UserSchema = new Schema({
     }
 });
 
-/**
- * Convert the user's password into a hash.
- * @param   object   user [Model's instance]
- * @param   function next
- * @returns function
- */
-function hashPassword(user, next) {
-    // Only hash the password if it has been modified (or is new)
-    // Help source: https://stackoverflow.com/a/14595363
-    if (!user.isModified("password")) return next();
-
-    Hash.make(user.password, (err, hash) => {
-        if (err) {
-            console.log(`Error in hashing password: ${err.message}`);
-            return next(err.message);
-        }
-
-        user.password = hash;
-        next();
-    });
-}
-
 UserSchema.pre("findOneAndUpdate", function (next) {
     if (typeof this._update !== "undefined") {
         // Update to current datetime before saving
@@ -72,7 +50,7 @@ UserSchema.pre("findOneAndUpdate", function (next) {
     next();
 });
 
-UserSchema.pre("save", function (next) {
+UserSchema.pre("save", async function (next) {
     let user = this;
 
     // This code prevents of adding an arbitrary value to the 'created_at' field when creating a new document
@@ -82,7 +60,14 @@ UserSchema.pre("save", function (next) {
 
     // Update to current datetime before saving
     user.updated_at = new Date();
-    hashPassword(user, next);
+
+    // Only hash the password if it has been modified (or is new)
+    // Help source: https://stackoverflow.com/a/14595363
+    if (user.isModified("password")) {
+        user.password = await Hash.make(user.password);
+    }
+
+    next();
 });
 
 /**

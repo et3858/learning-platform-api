@@ -3,13 +3,14 @@ const bcrypt = require("bcrypt");
 /**
  * Convert a string into a hash
  * @param   string   str
- * @param   function callback
- * @returns function
+ * @returns function          [Returns a Promise]
  */
-exports.make = (str, callback) => {
-    bcrypt.hash(str, 10, (err, hash) => {
-        if (err) return callback(err);
-        callback(null, hash);
+exports.make = (str) => {
+    return new Promise((resolve, reject) => {
+        bcrypt
+            .hash(str, 10)
+            .then(hash => resolve(hash))
+            .catch(err => reject(err));
     });
 };
 
