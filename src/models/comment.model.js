@@ -22,4 +22,15 @@ var CommentSchema = new Schema({
     }
 });
 
+CommentSchema.pre("save", function (next) {
+    // This code prevents of adding an arbitrary value to the 'created_at' field when creating a new document
+    if (this.isModified("created_at")) {
+        this.created_at = new Date();
+    }
+
+    // Update to current datetime before saving
+    this.updated_at = new Date();
+    next();
+});
+
 module.exports = mongoose.model("Note", CommentSchema);

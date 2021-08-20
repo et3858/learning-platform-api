@@ -76,6 +76,11 @@ UserSchema.pre("findOneAndUpdate", function (next) {
 UserSchema.pre("save", function (next) {
     let user = this;
 
+    // This code prevents of adding an arbitrary value to the 'created_at' field when creating a new document
+    if (user.isModified("created_at")) {
+        user.created_at = new Date();
+    }
+
     // Update to current datetime before saving
     user.updated_at = new Date();
     hashPassword(user, next);
