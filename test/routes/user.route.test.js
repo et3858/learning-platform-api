@@ -479,6 +479,7 @@ describe("User Routes", () => {
                         res.body.should.not.have.property("errors");
                         res.body.should.have.property("created_at");
                         res.body.should.have.property("updated_at");
+                        new Date(res.body.created_at).should.equalDate(newUser.created_at);
                         new Date(res.body.created_at).should.not.equalDate(updatedBody.created_at);
                         new Date(res.body.updated_at).should.not.equalDate(updatedBody.updated_at);
                         done();
