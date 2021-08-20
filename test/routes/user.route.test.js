@@ -3,12 +3,14 @@ process.env.NODE_ENV = "test";
 
 let faker = require("faker");
 var chai = require("chai");
+var chaiDT = require("chai-datetime");
 var chaiHttp = require("chai-http");
-let should = chai.should();
+chai.should();
 const dbHandler = require("../db_handler");
 const User = require("../../src/models/user.model");
 
 const server = require("../../src/app");
+chai.use(chaiDT);
 chai.use(chaiHttp);
 
 // Help source: https://stackoverflow.com/a/65223900
@@ -186,6 +188,30 @@ describe("User Routes", () => {
                     res.should.have.status(200);
                     res.body.should.be.a("object");
                     res.body.should.not.have.property("errors");
+                    done();
+                });
+        });
+
+        it("Creating a user but it prevents adding arbitrary datetime values to the timestamps", (done) => {
+            let dt = new Date(2010, 01, 01);
+            body.created_at = dt;
+            body.updated_at = dt;
+
+            // requester
+            chai
+                .request(server)
+                .post(endpoint)
+                .send(body)
+                .end((err, res) => {
+                    if (err) done(err);
+
+                    res.should.have.status(200);
+                    res.body.should.be.a("object");
+                    res.body.should.not.have.property("errors");
+                    res.body.should.have.property("created_at");
+                    res.body.should.have.property("updated_at");
+                    new Date(res.body.created_at).should.not.equalDate(body.created_at);
+                    new Date(res.body.updated_at).should.not.equalDate(body.updated_at);
                     done();
                 });
         });
@@ -424,6 +450,37 @@ describe("User Routes", () => {
                         res.should.have.status(200);
                         res.body.should.be.a("object");
                         res.body.should.not.have.property("errors");
+                        done();
+                    });
+            });
+        });
+
+        it("Updating a user but it prevents adding arbitrary datetime values to the timestamps", (done) => {
+            let user = new User(body);
+            user.save((err, newUser) => {
+                if (err) done(err);
+
+                let dt = new Date(2010, 01, 01);
+                let updatedBody = {
+                    created_at: dt,
+                    updated_at: dt
+                };
+
+                // requester
+                chai
+                    .request(server)
+                    .put(endpoint + "/" + newUser._id)
+                    .send(updatedBody)
+                    .end((err, res) => {
+                        if (err) done(err);
+
+                        res.should.have.status(200);
+                        res.body.should.be.a("object");
+                        res.body.should.not.have.property("errors");
+                        res.body.should.have.property("created_at");
+                        res.body.should.have.property("updated_at");
+                        new Date(res.body.created_at).should.not.equalDate(updatedBody.created_at);
+                        new Date(res.body.updated_at).should.not.equalDate(updatedBody.updated_at);
                         done();
                     });
             });
