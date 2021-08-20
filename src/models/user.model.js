@@ -81,6 +81,14 @@ UserSchema.pre("save", function (next) {
     hashPassword(user, next);
 });
 
+UserSchema.pre("validate", function (next) {
+    // This hook prevents of adding an arbitrary value to the 'created_at' field when creating a new document
+    if (this.isModified("created_at")) {
+        this.created_at = new Date();
+    }
+    next();
+});
+
 /**
  * Returns a Promise function
  * @param   string   inputPassword
