@@ -4,21 +4,21 @@ const UserController = {
     index: ((req, res) => {
         User.find(req.query, (err, users) => {
             if (err) return res.send(500, err.message);
-            res.status(200).jsonp(users);
+            res.status(200).jsonp({ data: users });
         });
     }),
     store: ((req, res) => {
         User.create(req.body, (err, user) => {
             if (err) return res.status(500).send(err.message);
 
-            res.status(201).jsonp(user);
+            res.status(201).jsonp({ data: user });
         });
     }),
     show: ((req, res) => {
         User.findById(req.params.id, function (err, user) {
             if (err) return res.status(500).send(err.message);
 
-            res.status(200).jsonp(user);
+            res.status(200).jsonp({ data: user });
         });
     }),
     update: ((req, res) => {
@@ -28,7 +28,7 @@ const UserController = {
 
             if (err) return res.status(500).send(err.message);
 
-            res.status(200).jsonp(user);
+            res.status(200).jsonp({ data: user });
         });
     }),
     destroy: ((req, res) => {

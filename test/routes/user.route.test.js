@@ -55,7 +55,8 @@ describe("User Routes", () => {
                 .end((err, res) => {
                     if (err) done(err);
                     res.should.have.status(200);
-                    res.body.should.be.an("array").that.is.empty;
+                    res.body.should.have.property("data");
+                    res.body.data.should.be.an("array").that.is.empty;
                     done();
                 });
         });
@@ -73,9 +74,10 @@ describe("User Routes", () => {
                         if (err) done(err);
 
                         res.should.have.status(200);
-                        res.body.should.be.an("array");
-                        res.body.length.should.be.above(0);
-                        res.body.every(
+                        res.body.should.have.property("data");
+                        res.body.data.should.be.an("array");
+                        res.body.data.length.should.be.above(0);
+                        res.body.data.every(
                             u => u.should.include.all.keys("name", "username", "email").but.not.have.all.keys("password")
                         );
                         // Help source: https://github.com/chaijs/chai/issues/410#issuecomment-344967338
@@ -163,10 +165,11 @@ describe("User Routes", () => {
                     if (err) done(err);
 
                     res.should.have.status(201);
-                    res.body.should.be.a("object");
-                    res.body.should.not.have.property("errors");
-                    res.body.should.have.property("name");
-                    res.body.should.have.property("email");
+                    res.body.should.have.property("data");
+                    res.body.data.should.be.a("object");
+                    res.body.data.should.not.have.property("errors");
+                    res.body.data.should.have.property("name");
+                    res.body.data.should.have.property("email");
                     done();
                 });
         });
@@ -186,8 +189,9 @@ describe("User Routes", () => {
                     if (err) done(err);
 
                     res.should.have.status(201);
-                    res.body.should.be.a("object");
-                    res.body.should.not.have.property("errors");
+                    res.body.should.have.property("data");
+                    res.body.data.should.be.a("object");
+                    res.body.data.should.not.have.property("errors");
                     done();
                 });
         });
@@ -206,12 +210,13 @@ describe("User Routes", () => {
                     if (err) done(err);
 
                     res.should.have.status(201);
-                    res.body.should.be.a("object");
                     res.body.should.not.have.property("errors");
-                    res.body.should.have.property("created_at");
-                    res.body.should.have.property("updated_at");
-                    new Date(res.body.created_at).should.not.equalDate(body.created_at);
-                    new Date(res.body.updated_at).should.not.equalDate(body.updated_at);
+                    res.body.should.have.property("data");
+                    res.body.data.should.be.a("object");
+                    res.body.data.should.have.property("created_at");
+                    res.body.data.should.have.property("updated_at");
+                    new Date(res.body.data.created_at).should.not.equalDate(body.created_at);
+                    new Date(res.body.data.updated_at).should.not.equalDate(body.updated_at);
                     done();
                 });
         });
@@ -331,10 +336,11 @@ describe("User Routes", () => {
                         if (err) done(err);
 
                         res.should.have.status(200);
-                        res.body.should.not.be.a("null");
-                        res.body.should.be.an("object");
-                        res.body.should.include.all.keys("_id", "name", "username", "email").but.not.have.all.keys("password");
-                        res.body._id.toString().should.equal(newUser._id.toString());
+                        res.body.should.have.property("data");
+                        res.body.data.should.not.be.a("null");
+                        res.body.data.should.be.an("object");
+                        res.body.data.should.include.all.keys("_id", "name", "username", "email").but.not.have.all.keys("password");
+                        res.body.data._id.toString().should.equal(newUser._id.toString());
                         done();
                     });
             });
@@ -351,7 +357,8 @@ describe("User Routes", () => {
                     if (err) done(err);
 
                     res.should.have.status(200);
-                    (res.body === null).should.be.true;
+                    res.body.should.have.property("data");
+                    (res.body.data === null).should.be.true;
                     done();
                 });
         });
@@ -419,10 +426,11 @@ describe("User Routes", () => {
                         if (err) done(err);
 
                         res.should.have.status(200);
-                        res.body.should.include.all.keys("_id", "name", "username", "email").but.not.have.all.keys("password");
-                        res.body.name.should.equal(updatedBody.name).not.equal(newUser.name);
-                        res.body.username.should.equal(updatedBody.username).not.equal(newUser.username);
-                        res.body.email.should.equal(updatedBody.email.toLowerCase()).not.equal(newUser.email);
+                        res.body.should.have.property("data");
+                        res.body.data.should.include.all.keys("_id", "name", "username", "email").but.not.have.all.keys("password");
+                        res.body.data.name.should.equal(updatedBody.name).not.equal(newUser.name);
+                        res.body.data.username.should.equal(updatedBody.username).not.equal(newUser.username);
+                        res.body.data.email.should.equal(updatedBody.email.toLowerCase()).not.equal(newUser.email);
                         done();
                     });
             });
@@ -448,8 +456,9 @@ describe("User Routes", () => {
                         if (err) done(err);
 
                         res.should.have.status(200);
-                        res.body.should.be.a("object");
                         res.body.should.not.have.property("errors");
+                        res.body.should.have.property("data");
+                        res.body.data.should.be.a("object");
                         done();
                     });
             });
@@ -475,13 +484,14 @@ describe("User Routes", () => {
                         if (err) done(err);
 
                         res.should.have.status(200);
-                        res.body.should.be.a("object");
                         res.body.should.not.have.property("errors");
-                        res.body.should.have.property("created_at");
-                        res.body.should.have.property("updated_at");
-                        new Date(res.body.created_at).should.equalDate(newUser.created_at);
-                        new Date(res.body.created_at).should.not.equalDate(updatedBody.created_at);
-                        new Date(res.body.updated_at).should.not.equalDate(updatedBody.updated_at);
+                        res.body.should.have.property("data");
+                        res.body.data.should.be.a("object");
+                        res.body.data.should.have.property("created_at");
+                        res.body.data.should.have.property("updated_at");
+                        new Date(res.body.data.created_at).should.equalDate(newUser.created_at);
+                        new Date(res.body.data.created_at).should.not.equalDate(updatedBody.created_at);
+                        new Date(res.body.data.updated_at).should.not.equalDate(updatedBody.updated_at);
                         done();
                     });
             });
@@ -512,7 +522,8 @@ describe("User Routes", () => {
                     if (err) done(err);
 
                     res.should.have.status(200);
-                    (res.body === null).should.be.true;
+                    res.body.should.have.property("data");
+                    (res.body.data === null).should.be.true;
                     done();
                 });
         });
