@@ -1,4 +1,4 @@
-var CategoryController = include("controllers/category.controller");
+var CategoryController = include("controllers/api/v1/category.controller");
 var CategoryMiddleware = include("middlewares/category.middleware");
 
 var express = require("express");

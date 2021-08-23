@@ -1,4 +1,4 @@
-var UserController = include("controllers/user.controller");
+var UserController = include("controllers/api/v1/user.controller");
 var UserMiddleware = include("middlewares/user.middleware");
 
 var express = require("express");

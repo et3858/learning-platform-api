@@ -1,14 +1,10 @@
-var authRouter = require("./api/auth");
-var categoriesRouter = require("./api/categories");
-var coursesRouter = require("./api/courses");
-var usersRouter = require("./api/users");
+var authRoutes = require("./api/auth.routes");
+var v1Routes = require("./api/v1/index");
 
 var express = require("express");
 var router = express.Router();
 
-router.use("/auth", authRouter);
-router.use("/categories", categoriesRouter);
-router.use("/courses", coursesRouter);
-router.use("/users", usersRouter);
+router.use("/auth", authRoutes);
+router.use("/v1", v1Routes);
 
 module.exports = router;

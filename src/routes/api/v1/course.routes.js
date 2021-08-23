@@ -1,4 +1,4 @@
-var CourseController = include("controllers/course.controller");
+var CourseController = include("controllers/api/v1/course.controller");
 var CourseMiddleware = include("middlewares/course.middleware");
 
 var express = require("express");

@@ -1,4 +1,4 @@
-var AuthController = include("controllers/auth.controller");
+var AuthController = include("controllers/api/auth.controller");
 var AuthMiddleware = include("middlewares/auth.middleware");
 
 var express = require("express");

@@ -42,7 +42,7 @@ after(async () => await dbHandler.closeDatabase());
 describe("User Routes", () => {
 
     let body;
-    let endpoint = "/api/users";
+    let endpoint = "/api/v1/users";
 
     beforeEach(() => body = getUserBody());
 
