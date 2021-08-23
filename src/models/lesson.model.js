@@ -1,3 +1,5 @@
+const Durations = require("../services/durations");
+
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
@@ -24,6 +26,12 @@ var LessonSchema = new Schema({
         type: Date,
         default: Date.now
     }
+}, {
+    toJSON: { virtuals: true }
+});
+
+LessonSchema.virtual("time_duration").get(function () {
+    return Durations(this.duration, "seconds");
 });
 
 LessonSchema.pre("save", function (next) {
