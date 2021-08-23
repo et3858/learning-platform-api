@@ -162,7 +162,7 @@ describe("User Routes", () => {
                 .end((err, res) => {
                     if (err) done(err);
 
-                    res.should.have.status(200);
+                    res.should.have.status(201);
                     res.body.should.be.a("object");
                     res.body.should.not.have.property("errors");
                     res.body.should.have.property("name");
@@ -185,7 +185,7 @@ describe("User Routes", () => {
                 .end((err, res) => {
                     if (err) done(err);
 
-                    res.should.have.status(200);
+                    res.should.have.status(201);
                     res.body.should.be.a("object");
                     res.body.should.not.have.property("errors");
                     done();
@@ -205,7 +205,7 @@ describe("User Routes", () => {
                 .end((err, res) => {
                     if (err) done(err);
 
-                    res.should.have.status(200);
+                    res.should.have.status(201);
                     res.body.should.be.a("object");
                     res.body.should.not.have.property("errors");
                     res.body.should.have.property("created_at");
@@ -600,7 +600,7 @@ describe("User Routes", () => {
                     .end((err, res) => {
                         if (err) done(err);
 
-                        res.should.have.status(200);
+                        res.should.have.status(204);
                         res.body.should.be.empty;
                         done();
                     });

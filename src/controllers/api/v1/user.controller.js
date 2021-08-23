@@ -11,7 +11,7 @@ const UserController = {
         User.create(req.body, (err, user) => {
             if (err) return res.status(500).send(err.message);
 
-            res.status(200).jsonp(user);
+            res.status(201).jsonp(user);
         });
     }),
     show: ((req, res) => {
@@ -35,7 +35,7 @@ const UserController = {
         User.findByIdAndDelete(req.params.id, (err) => {
             if (err) return res.status(500).send(err.message);
 
-            res.status(200).send();
+            res.status(204).send();
         });
     })
 };
