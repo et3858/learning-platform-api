@@ -4,17 +4,19 @@ const Lesson = include("models/lesson.model");
 const CourseController = {
     index: ((req, res) => {
         // Create a new object called 'query'
-        // but removing 'populate_with' and 'select_only' fields from 'req.query'
-        // and isolating each of them ('populate_with' and 'select_only') as a string variable
-        const { populate_with, select_only, ...query } = req.query;
+        // but removing 'populate_with', 'select_only', 'limit' and 'page' fields from 'req.query'
+        // and isolating each of them ('populate_with', 'select_only', 'limit' and 'page') as independent variables
+        const { populate_with, select_only, limit, page, ...query } = req.query;
+
+        const options = { limit, skip: (page - 1) * limit };
 
         Course
-            .find(query, (err, courses) => {
-                if (err) return res.send(500, err.message);
-                res.status(200).jsonp(courses);
-            })
+            .find(query, select_only, options)
             .populate(populate_with)
-            .select(select_only);
+            .exec((err, courses) => {
+                if (err) return res.status(500).send(err.message);
+                res.status(200).jsonp({ data: courses });
+            });
     }),
     getCourseBySlug: ((req, res) => {
         Course
