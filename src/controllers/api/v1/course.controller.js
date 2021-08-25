@@ -1,5 +1,6 @@
 const Course = include("models/course.model");
 const Lesson = include("models/lesson.model");
+const pagination = include("services/pagination");
 
 const CourseController = {
     index: ((req, res) => {
@@ -8,10 +9,8 @@ const CourseController = {
         // and isolating each of them ('populate_with', 'select_only', 'limit' and 'page') as independent variables
         const { populate_with, select_only, limit, page, ...query } = req.query;
 
-        const options = { limit, skip: (page - 1) * limit };
-
         Course
-            .find(query, select_only, options)
+            .find(query, select_only, pagination.getOptions(limit, page))
             .populate(populate_with)
             .exec((err, courses) => {
                 if (err) return res.status(500).send(err.message);
