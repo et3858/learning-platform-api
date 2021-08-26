@@ -71,7 +71,12 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.format({
+    "text/plain": () => res.send(err.message),
+    "text/html": () => res.render("error"),
+    "application/json": () => res.json(err),
+    default: () => res.status(406).send("Not Acceptable") // log the request and respond with 406
+  });
 });
 
 module.exports = app;
