@@ -2,8 +2,8 @@ const bcrypt = require("bcrypt");
 
 /**
  * Convert a string into a hash
- * @param   string   str
- * @returns function          [Returns a Promise]
+ * @param  {string}   str
+ * @return {function}          [Returns a Promise]
  */
 exports.make = (str) => {
     return new Promise((resolve, reject) => {
@@ -16,10 +16,9 @@ exports.make = (str) => {
 
 /**
  * Compares if a string matches with a hash
- * @param   string   str
- * @param   string   hash
- * @param   function callback
- * @returns function
+ * @param {string}   str
+ * @param {string}   hash
+ * @param {function} callback
  */
 exports.compare = (str, hash, callback) => {
     bcrypt.compare(str, hash, (err, isMatch) => {

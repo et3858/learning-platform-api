@@ -1,24 +1,23 @@
 /**
  * Fill the number with a zero prefix if number is less than "9"
- * @param   int    num 
- * @returns string
+ * @param  {int}    num
+ * @return {string}
  */
 const addZero = num => (num <= 9 ? "0" : "") + num;
 
 /**
  * Calculate time duration based on interval
- * @param   int    time
- * @param   string interval
- * @returns string
+ * @param  {int}    time
+ * @param  {string} interval
+ * @return {string}
  */
 module.exports = (time = 0, interval = "millisecond") => {
+    if (isNaN(time)) throw new Error("not a number");
 
-    if (isNaN(time)) throw "not a number";
+    const startDate = new Date(0, 0, 0, 0, 0, 0);
+    const endDate = new Date(0, 0, 0, 0, 0, 0);
 
-    let startDate = new Date(0, 0, 0, 0, 0, 0);
-    let endDate = new Date(0, 0, 0, 0, 0, 0);
-
-    switch(interval) {
+    switch (interval) {
         case "hour":
         case "hours":
             endDate.setHours(endDate.getHours() + time);
@@ -41,9 +40,9 @@ module.exports = (time = 0, interval = "millisecond") => {
 
     let hours = Math.floor(diff / 1000 / 60 / 60);
     diff -= hours * (1000 * 60 * 60);
-    let minutes = Math.floor(diff / 1000 / 60);
+    const minutes = Math.floor(diff / 1000 / 60);
     diff -= minutes * (1000 * 60);
-    let seconds = Math.floor(diff / 1000);
+    const seconds = Math.floor(diff / 1000);
 
     // If using time pickers with 24 hours format, add the below line get exact hours
     if (hours < 0) hours += 24;
