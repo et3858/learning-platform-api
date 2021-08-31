@@ -16,7 +16,7 @@ const AuthController = {
 
                 if (!isMatch) return res.status(401).send("unauthenticated user or password");
 
-                let jwtUser = (({ _id, email, name, username }) => ({ _id, email, name, username }))(user);
+                const jwtUser = (({ _id, email, name, username }) => ({ _id, email, name, username }))(user);
 
                 jwt.sign({ user: jwtUser }, auth.jwt.secret, (err, token) => {
                     if (err) return res.status(500).send(err.message);
@@ -26,7 +26,7 @@ const AuthController = {
         });
     })
     // logout: ((req, res) => {
-    //     // 
+    //     //
     // })
 };
 
