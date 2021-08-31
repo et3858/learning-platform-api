@@ -1,8 +1,8 @@
-var mongoose = require("mongoose");
-var deepPopulate = require("mongoose-deep-populate")(mongoose);
-var Schema = mongoose.Schema;
+const mongoose = require("mongoose");
+const deepPopulate = require("mongoose-deep-populate")(mongoose);
+const Schema = mongoose.Schema;
 
-var CategorySchema = new Schema({
+const CategorySchema = new Schema({
     name: String,
     courses: [{
         type: Schema.Types.ObjectId,

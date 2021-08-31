@@ -1,9 +1,9 @@
-const Durations = require("../services/durations");
+const durations = require("../services/durations");
 
-var mongoose = require("mongoose");
-var Schema = mongoose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-var LessonSchema = new Schema({
+const LessonSchema = new Schema({
     name: String,
     description: String,
     slug: String,
@@ -31,7 +31,7 @@ var LessonSchema = new Schema({
 });
 
 LessonSchema.virtual("time_duration").get(function () {
-    return Durations(this.duration, "seconds");
+    return durations(this.duration, "seconds");
 });
 
 LessonSchema.pre("save", function (next) {
