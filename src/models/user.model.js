@@ -1,11 +1,11 @@
 const Hash = require("../services/hash");
-var mongoose = require("mongoose");
-var Schema = mongoose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-var UserSchema = new Schema({
+const UserSchema = new Schema({
     name: {
         type: String,
-        required: true,
+        required: true
     },
     username: {
         type: String,
@@ -51,7 +51,7 @@ UserSchema.pre("findOneAndUpdate", function (next) {
 });
 
 UserSchema.pre("save", async function (next) {
-    let user = this;
+    const user = this;
 
     // This code prevents of adding an arbitrary value to the 'created_at' field when creating a new document
     if (user.isModified("created_at")) {
@@ -72,9 +72,9 @@ UserSchema.pre("save", async function (next) {
 
 /**
  * Compares a password with a user's hashed password.
- * @param   string   inputPassword
- * @param   function callback
- * @returns function
+ * @param  {string}   inputPassword
+ * @param  {function} callback
+ * @return {function}
  */
 UserSchema.methods.passwordComparison = function (inputPassword, callback) {
     return Hash.compare(inputPassword, this.password, callback);
@@ -83,10 +83,10 @@ UserSchema.methods.passwordComparison = function (inputPassword, callback) {
 /**
  * Hide some fields of the instance before returning to the client as a JSON format.
  * Help source: https://contactsunny.medium.com/hide-properties-of-mongoose-objects-in-node-js-json-responses-a5437a5dbec2
- * @returns object
+ * @return {object}
  */
 UserSchema.methods.toJSON = function () {
-    let user = this.toObject();
+    const user = this.toObject();
     delete user.password;
     return user;
 };
