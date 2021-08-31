@@ -7,8 +7,8 @@ const User = include("models/user.model");
 
 /**
  * Returns a list of possible regex keywords to search by name.
- * @param   string name
- * @returns object
+ * @param  {string} name
+ * @return {object}
  */
 function nameKeywords(name) {
     return { $in: name.replace(/\s+/g, " ").split(" ").map(keyword => new RegExp(keyword, "i")) };
@@ -17,12 +17,12 @@ function nameKeywords(name) {
 
 /**
  * Check if a user already exists by conditions.
- * @param   object conditions
- * @param   string feedback
- * @returns object [Promise]
+ * @param  {object} conditions
+ * @param  {string} feedback
+ * @return {object} [Promise]
  */
 function userAlreadyExists(conditions, feedback) {
-    return User.findOne(conditions).then(user => {
+    return User.findOne(conditions).then((user) => {
         if (user !== null) return Promise.reject(feedback);
     });
 }
@@ -30,9 +30,9 @@ function userAlreadyExists(conditions, feedback) {
 /**
  * Check if username is already in use by a user.
  * Source of this method: https://stackoverflow.com/q/59764397
- * @param   string username
- * @param   object param1
- * @returns object [Promise]
+ * @param  {string} username
+ * @param  {object} param1
+ * @return {object} [Promise]
  */
 function usernameAlreadyExists(username, { req }) {
     return userAlreadyExists({
@@ -44,9 +44,9 @@ function usernameAlreadyExists(username, { req }) {
 /**
  * Check if email is already in use by a user.
  * Source of this method: https://stackoverflow.com/q/59764397
- * @param   string email
- * @param   object param1
- * @returns object [Promise]
+ * @param  {string} email
+ * @param  {object} param1
+ * @return {object} [Promise]
  */
 function emailAlreadyExists(email, { req }) {
     return userAlreadyExists({

@@ -7,19 +7,19 @@ const validation = include("services/validations");
 
 /**
  * Check if token is valid.
- * @param   string token     [It must start with 'Bearer ']
- * @returns object [Promise]
+ * @param  {string} token     [It must start with 'Bearer ']
+ * @return {object} [Promise]
  */
 async function isTokenVerified(token) {
     return jwt.verify(token.split(" ")[1], auth.jwt.secret, (err) => {
-        if (err) return Promise.reject();
+        if (err) return Promise.reject(err);
     });
 }
 
 /**
  * Returns a function that validates some fields
- * @param   int      status
- * @returns function
+ * @param  {int}      status
+ * @return {function}
  */
 function validate(status) {
     return (req, res, next) => {
@@ -30,7 +30,7 @@ function validate(status) {
         res.status(status).json({
             errors: errors.array()
         });
-    }
+    };
 }
 
 const verifyToken = [
