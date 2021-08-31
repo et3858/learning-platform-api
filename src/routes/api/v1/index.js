@@ -1,9 +1,9 @@
-var categoryRoutes = require("./category.routes");
-var courseRoutes = require("./course.routes");
-var userRoutes = require("./user.routes");
+const categoryRoutes = require("./category.routes");
+const courseRoutes = require("./course.routes");
+const userRoutes = require("./user.routes");
 
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 
 router.use("/categories", categoryRoutes);
 router.use("/courses", courseRoutes);

@@ -1,8 +1,8 @@
-var CourseController = include("controllers/api/v1/course.controller");
-var CourseMiddleware = include("middlewares/course.middleware");
+const CourseController = include("controllers/api/v1/course.controller");
+const CourseMiddleware = include("middlewares/course.middleware");
 
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 
 router
     .route("/")

@@ -1,8 +1,8 @@
-var CategoryController = include("controllers/api/v1/category.controller");
-var CategoryMiddleware = include("middlewares/category.middleware");
+const CategoryController = include("controllers/api/v1/category.controller");
+const CategoryMiddleware = include("middlewares/category.middleware");
 
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 
 router
     .route("/")

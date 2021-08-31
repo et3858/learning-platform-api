@@ -1,8 +1,8 @@
-var AuthController = include("controllers/api/auth.controller");
-var AuthMiddleware = include("middlewares/auth.middleware");
+const AuthController = include("controllers/api/auth.controller");
+const AuthMiddleware = include("middlewares/auth.middleware");
 
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 
 router.post("/login", AuthMiddleware.beforeLogin, AuthController.login);
 

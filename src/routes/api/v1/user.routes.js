@@ -1,8 +1,8 @@
-var UserController = include("controllers/api/v1/user.controller");
-var UserMiddleware = include("middlewares/user.middleware");
+const UserController = include("controllers/api/v1/user.controller");
+const UserMiddleware = include("middlewares/user.middleware");
 
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 
 router
     .route("/")
