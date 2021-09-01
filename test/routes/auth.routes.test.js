@@ -1,10 +1,10 @@
 // Set environment to "test" for avoiding clear the database for development or production
 process.env.NODE_ENV = "test";
 
-let faker = require("faker");
-var chai = require("chai");
-var chaiHttp = require("chai-http");
-let should = chai.should();
+const faker = require("faker");
+const chai = require("chai");
+const chaiHttp = require("chai-http");
+chai.should();
 const dbHandler = require("../db_handler");
 const User = require("../../src/models/user.model");
 
@@ -26,8 +26,8 @@ after(async () => await dbHandler.closeDatabase());
 
 
 describe("Auth Routes", () => {
+    const endpoint = "/api/auth";
     let body;
-    let endpoint = "/api/auth";
 
     beforeEach(() => {
         body = {
@@ -134,11 +134,11 @@ describe("Auth Routes", () => {
         });
 
         it("SHOULD NOT the new user login by an incorrect password", (done) => {
-            let user = new User(body);
+            const user = new User(body);
             user.save((err) => {
                 if (err) done(err);
 
-                let newPassword = faker.internet.password();
+                const newPassword = faker.internet.password();
 
                 // requester
                 chai
@@ -159,7 +159,7 @@ describe("Auth Routes", () => {
         });
 
         it("SHOULD the new user login successfully", (done) => {
-            let user = new User(body);
+            const user = new User(body);
             user.save((err) => {
                 if (err) done(err);
 
@@ -219,7 +219,7 @@ describe("Auth Routes", () => {
         });
 
         it("Verify authenticated user", (done) => {
-            let newToken = `Bearer ${token}`;
+            const newToken = `Bearer ${token}`;
 
             // requester
             chai
@@ -254,9 +254,9 @@ describe("Auth Routes", () => {
         });
 
         describe("Bad tokens", () => {
-            let tokenRequiredMsg = "a token is required for authentication";
-            let invalidTokenMsg = "invalid token";
-            let tests = [
+            const tokenRequiredMsg = "a token is required for authentication";
+            const invalidTokenMsg = "invalid token";
+            const tests = [
                 {
                     token: "",
                     status: 403,
@@ -303,7 +303,9 @@ describe("Auth Routes", () => {
                     msg: invalidTokenMsg
                 },
                 {
-                    token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+                    token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" +
+                        ".eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ" +
+                        ".SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
                     status: 401,
                     msg: invalidTokenMsg
                 }

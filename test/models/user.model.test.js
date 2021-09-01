@@ -1,11 +1,10 @@
 // Set environment to "test" for avoiding clear the database for development or production
 process.env.NODE_ENV = "test";
 
-var assert = require('assert');
-let faker = require("faker");
-var chai = require("chai");
-let should = chai.should();
-let expect = chai.expect;
+const assert = require("assert");
+const faker = require("faker");
+const chai = require("chai");
+const expect = chai.expect;
 const dbHandler = require("../db_handler");
 const User = require("../../src/models/user.model");
 
@@ -17,7 +16,6 @@ afterEach(async () => await dbHandler.clearDatabase());
 
 // Remove and close the db and server.
 after(async () => await dbHandler.closeDatabase());
-
 
 
 describe("User Model", () => {
@@ -33,7 +31,7 @@ describe("User Model", () => {
     });
 
     it("Get all users", async () => {
-        let user = new User(body);
+        const user = new User(body);
         await user.save();
 
         User.find({}, (err, users) => {
@@ -69,7 +67,7 @@ describe("User Model", () => {
         User.create(body, (err, user) => {
             if (err) done(err);
 
-            let newPassword = faker.internet.password();
+            const newPassword = faker.internet.password();
             user.passwordComparison(newPassword, (err, res) => {
                 if (err) done(err);
                 expect(user).to.not.be.a("null");
@@ -81,7 +79,7 @@ describe("User Model", () => {
     });
 
     it("Get the existing user", async () => {
-        let user = new User(body);
+        const user = new User(body);
         await user.save();
 
         User.findById(user._id, (err, searchedUser) => {
@@ -93,11 +91,11 @@ describe("User Model", () => {
     });
 
     it("Change the user's name and email", async () => {
-        let user = new User(body);
+        const user = new User(body);
         await user.save();
 
-        let newName = faker.name.findName();
-        let newEmail = faker.internet.email();
+        const newName = faker.name.findName();
+        const newEmail = faker.internet.email();
 
         user.name = newName;
         user.email = newEmail;
@@ -107,13 +105,12 @@ describe("User Model", () => {
             expect(updatedUser).to.be.an("object");
             expect(updatedUser.name).to.equal(newName).not.equal(body.name);
             expect(updatedUser.email).to.equal(newEmail).not.equal(body.email);
-
-            expect(updatedUser.updated_at.valueOf()).to.be.above(updatedUser.created_at.valueOf())
+            expect(updatedUser.updated_at.valueOf()).to.be.above(updatedUser.created_at.valueOf());
         });
     });
 
     it("Remove a user", async () => {
-        let user = new User(body);
+        const user = new User(body);
 
         // Save the new user, then remove it
         await user.save();

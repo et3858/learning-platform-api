@@ -1,10 +1,10 @@
 // Set environment to "test" for avoiding clear the database for development or production
 process.env.NODE_ENV = "test";
 
-let faker = require("faker");
-var chai = require("chai");
-var chaiDT = require("chai-datetime");
-var chaiHttp = require("chai-http");
+const faker = require("faker");
+const chai = require("chai");
+const chaiDT = require("chai-datetime");
+const chaiHttp = require("chai-http");
 chai.should();
 const dbHandler = require("../db_handler");
 const User = require("../../src/models/user.model");
@@ -17,8 +17,10 @@ chai.use(chaiHttp);
 // const requester = chai.request(server).keepOpen();
 
 
-
-
+/**
+ * Returns fake data to create or update a user
+ * @return {object}
+ */
 function getUserBody() {
     return {
         name: faker.name.findName(), // Rowan Nikolaus
@@ -40,9 +42,8 @@ after(async () => await dbHandler.closeDatabase());
 
 
 describe("User Routes", () => {
-
+    const endpoint = "/api/v1/users";
     let body;
-    let endpoint = "/api/v1/users";
 
     beforeEach(() => body = getUserBody());
 
@@ -62,7 +63,7 @@ describe("User Routes", () => {
         });
 
         it("Get all users", (done) => {
-            let user = new User(body);
+            const user = new User(body);
             user.save((err) => {
                 if (err) done(err);
 
@@ -77,9 +78,11 @@ describe("User Routes", () => {
                         res.body.should.have.property("data");
                         res.body.data.should.be.an("array");
                         res.body.data.length.should.be.above(0);
-                        res.body.data.every(
-                            u => u.should.include.all.keys("name", "username", "email").but.not.have.all.keys("password")
-                        );
+                        res.body.data.every(user => (
+                            user
+                                .should.include.all.keys("name", "username", "email")
+                                .but.not.have.all.keys("password")
+                        ));
                         // Help source: https://github.com/chaijs/chai/issues/410#issuecomment-344967338
 
                         done();
@@ -110,10 +113,10 @@ describe("User Routes", () => {
         });
 
         describe("Bad emails", () => {
-            let notEmptyMsg = "email must not be empty";
-            let notValidMsg = "not a valid email";
+            const notEmptyMsg = "email must not be empty";
+            const notValidMsg = "not a valid email";
 
-            let tests = [
+            const tests = [
                 { email: "", msg: notEmptyMsg },
                 { email: "     ", msg: notEmptyMsg },
                 { email: "foo", msg: notValidMsg },
@@ -197,7 +200,7 @@ describe("User Routes", () => {
         });
 
         it("Creating a user but it prevents adding arbitrary datetime values to the timestamps", (done) => {
-            let dt = new Date(2010, 01, 01);
+            const dt = new Date(2010, 1, 1);
             body.created_at = dt;
             body.updated_at = dt;
 
@@ -237,7 +240,7 @@ describe("User Routes", () => {
         });
 
         it("SHOULD get error 422 when sending an '_id' field inside the request", (done) => {
-            let fakeID = "0123456789abcdef01234567";
+            const fakeID = "0123456789abcdef01234567";
 
             // requester
             chai
@@ -282,11 +285,11 @@ describe("User Routes", () => {
         });
 
         it("SHOULD get error 422 if username and/or email are already in use", (done) => {
-            let user = new User(body);
+            const user = new User(body);
             user.save((err) => {
                 if (err) done(err);
 
-                let updatedBody = {
+                const updatedBody = {
                     email: user.email,
                     username: user.username,
                 };
@@ -324,7 +327,7 @@ describe("User Routes", () => {
 
     describe("GET route /users/:id", () => {
         it("Getting an existing user", (done) => {
-            let user = new User(body);
+            const user = new User(body);
             user.save((err, newUser) => {
                 if (err) done(err);
 
@@ -339,7 +342,9 @@ describe("User Routes", () => {
                         res.body.should.have.property("data");
                         res.body.data.should.not.be.a("null");
                         res.body.data.should.be.an("object");
-                        res.body.data.should.include.all.keys("_id", "name", "username", "email").but.not.have.all.keys("password");
+                        res.body.data
+                            .should.include.all.keys("_id", "name", "username", "email")
+                            .but.not.have.all.keys("password");
                         res.body.data._id.toString().should.equal(newUser._id.toString());
                         done();
                     });
@@ -347,7 +352,7 @@ describe("User Routes", () => {
         });
 
         it("Getting a non existing user", (done) => {
-            let fakeID = "0123456789abcdef01234567";
+            const fakeID = "0123456789abcdef01234567";
 
             // requester
             chai
@@ -364,7 +369,7 @@ describe("User Routes", () => {
         });
 
         describe("Bad ID params", () => {
-            let tests = [
+            const tests = [
                 "a",
                 "1",
                 "abc",
@@ -380,7 +385,7 @@ describe("User Routes", () => {
                 "0123456789abcdef0123456",
             ];
 
-            tests.forEach(fakeID => {
+            tests.forEach((fakeID) => {
                 it(`SHOULD have error 422 if 'id' param is not valid: "${fakeID}"`, (done) => {
                     // requester
                     chai
@@ -407,11 +412,11 @@ describe("User Routes", () => {
 
     describe("PUT route /users/:id", () => {
         it("Updating a user", (done) => {
-            let user = new User(body);
+            const user = new User(body);
             user.save((err, newUser) => {
                 if (err) done(err);
 
-                let updatedBody = {
+                const updatedBody = {
                     name: faker.name.findName(), // Ricardo Lang
                     username: faker.internet.userName(), // Ricardo Lang
                     email: faker.internet.email() // Lupe.Kunze@yahoo.com
@@ -427,7 +432,9 @@ describe("User Routes", () => {
 
                         res.should.have.status(200);
                         res.body.should.have.property("data");
-                        res.body.data.should.include.all.keys("_id", "name", "username", "email").but.not.have.all.keys("password");
+                        res.body.data
+                            .should.include.all.keys("_id", "name", "username", "email")
+                            .but.not.have.all.keys("password");
                         res.body.data.name.should.equal(updatedBody.name).not.equal(newUser.name);
                         res.body.data.username.should.equal(updatedBody.username).not.equal(newUser.username);
                         res.body.data.email.should.equal(updatedBody.email.toLowerCase()).not.equal(newUser.email);
@@ -439,11 +446,11 @@ describe("User Routes", () => {
         it("Updating a user's password using whitespace(s)", (done) => {
             // Source: https://www.infosecmatter.com/spaces-in-passwords-good-or-a-bad-idea/
 
-            let user = new User(body);
+            const user = new User(body);
             user.save((err, newUser) => {
                 if (err) done(err);
 
-                let updatedBody = {
+                const updatedBody = {
                     password: "     ",
                 };
 
@@ -465,12 +472,12 @@ describe("User Routes", () => {
         });
 
         it("Updating a user but it prevents adding arbitrary datetime values to the timestamps", (done) => {
-            let user = new User(body);
+            const user = new User(body);
             user.save((err, newUser) => {
                 if (err) done(err);
 
-                let dt = new Date(2010, 01, 01);
-                let updatedBody = {
+                const dt = new Date(2010, 1, 1);
+                const updatedBody = {
                     created_at: dt,
                     updated_at: dt
                 };
@@ -512,7 +519,7 @@ describe("User Routes", () => {
         });
 
         it("SHOULD get 'null' when updating a non existing user", (done) => {
-            let fakeID = "0123456789abcdef01234567";
+            const fakeID = "0123456789abcdef01234567";
 
             // requester
             chai
@@ -529,7 +536,7 @@ describe("User Routes", () => {
         });
 
         it("SHOULD get error 422 when sending an '_id' field inside the request", (done) => {
-            let user = new User(body);
+            const user = new User(body);
             user.save((err, newUser) => {
                 if (err) done(err);
 
@@ -559,10 +566,10 @@ describe("User Routes", () => {
             User.insertMany([getUserBody(), getUserBody()], (err, users) => {
                 if (err) done(err);
 
-                let user1 = users[0];
-                let user2 = users[1];
+                const user1 = users[0];
+                const user2 = users[1];
 
-                let updatedBody = {
+                const updatedBody = {
                     username: user1.username,
                     email: user1.email
                 };
@@ -600,7 +607,7 @@ describe("User Routes", () => {
 
     describe("DELETE route /users/:id", () => {
         it("Deleting a user", (done) => {
-            let user = new User(body);
+            const user = new User(body);
             user.save((err, newUser) => {
                 if (err) done(err);
 
