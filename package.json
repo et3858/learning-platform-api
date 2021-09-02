@@ -28,6 +28,7 @@
     "chai": "^4.3.4",
     "chai-datetime": "^1.8.0",
     "chai-http": "^4.3.0",
+    "chai-sorted": "^0.2.0",
     "eslint": "^7.32.0",
     "eslint-config-google": "^0.14.0",
     "faker": "^5.5.3",
