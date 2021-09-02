@@ -295,6 +295,52 @@ describe("Course Routes", () => {
             });
         });
     });
+
+    describe("GET route /courses/:slug", () => {
+        it("Getting an existing course", (done) => {
+            const course = courses[Math.floor(Math.random() * courses.length)];
+
+            Course.insertMany(courses, (err) => {
+                if (err) done(err);
+
+                // requester
+                chai
+                    .request(server)
+                    .get(endpoint + "/" + course.slug)
+                    .end((err, res) => {
+                        if (err) done(err);
+                        res.should.have.status(200);
+                        res.body.should.have.property("data");
+                        res.body.data.should.not.be.a("null");
+                        res.body.data.should.be.an("object");
+                        res.body.data.should.include.all.keys("name", "excerpt", "content", "slug", "release_date");
+                        res.body.data.slug.should.equal(course.slug);
+                        res.body.data.name.should.equal(course.name);
+                        res.body.data.excerpt.should.equal(course.excerpt);
+                        res.body.data.content.should.equal(course.content);
+                        new Date(res.body.data.release_date).should.equalDate(course.release_date);
+                        done();
+                    });
+            });
+        });
+
+        it("Getting a non existing course", (done) => {
+            const fakeSlug = "a-fake-slug";
+
+            // requester
+            chai
+                .request(server)
+                .get(endpoint + "/" + fakeSlug)
+                .end((err, res) => {
+                    if (err) done(err);
+                    res.should.have.status(404);
+                    res.body.should.not.have.property("data");
+                    res.body.should.have.property("message");
+                    res.body.message.should.have.string("Not Found");
+                    done();
+                });
+        });
+    });
 });
 
 
