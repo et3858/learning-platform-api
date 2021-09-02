@@ -5,12 +5,15 @@ const pagination = include("services/pagination");
 const CourseController = {
     index: ((req, res) => {
         // Create a new object called 'query'
-        // but removing 'populate_with', 'select_only', 'limit' and 'page' fields from 'req.query'
-        // and isolating each of them ('populate_with', 'select_only', 'limit' and 'page') as independent variables
-        const { populate_with, select_only, limit, page, ...query } = req.query;
+        // but removing 'populate_with', 'select_only', 'sort', 'limit' and 'page' fields from 'req.query'
+        // and isolating each of them ('populate_with', 'select_only', 'sort', 'limit' and 'page') as independent variables
+        const { populate_with, select_only, sort, limit, page, ...query } = req.query;
 
         pagination.responder(
-            Course.find(query, select_only, pagination.getOptions(limit, page)).populate(populate_with)
+            Course
+                .find(query, select_only, pagination.getOptions(limit, page))
+                .sort(sort)
+                .populate(populate_with)
         )
             .then(data => res.status(200).jsonp(data))
             .catch(err => res.status(500).send(err.message));

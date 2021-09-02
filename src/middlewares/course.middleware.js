@@ -3,9 +3,20 @@
 const { query } = require("express-validator");
 const validation = include("services/validations");
 
+/**
+ * Checks if there is an only dash without any characters followed
+ * @param  {string} value
+ * @return {bool}
+ */
+const checkDashes = value => !(value.split(" ").some(v => /^\-$/g.test(v)));
+
 exports.beforeIndex = [
     query("populate_with").trim(),
     query("select_only").trim(),
+    query("sort")
+        .optional()
+        .custom(checkDashes)
+        .withMessage("a ('-') dash must not be alone or prefixed for a blank space"),
     query("page")
         .optional()
         .trim()
