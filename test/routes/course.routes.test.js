@@ -9,6 +9,7 @@ const chaiSorted = require("chai-sorted");
 chai.should();
 const dbHandler = require("../db_handler");
 const Course = require("../../src/models/course.model");
+const Lesson = require("../../src/models/lesson.model");
 
 const server = require("../../src/app");
 chai.use(chaiDT);
@@ -24,7 +25,7 @@ chai.use(chaiSorted);
  * @param  {int}   n
  * @return {array}
  */
-function getFakeData(n) {
+function getFakeCourses(n) {
     const arr = [];
 
     for (let i = 0; i < n; i++) {
@@ -34,6 +35,35 @@ function getFakeData(n) {
             content: faker.lorem.paragraphs(),
             slug: faker.lorem.slug(),
             release_date: faker.date.between("2018-01-01", "2021-12-31"),
+        });
+    }
+
+    return arr;
+}
+
+/**
+ * Returns fake data to populate lessons
+ * @param  {int}    n
+ * @param  {object} course [ObjectId]
+ * @return {array}
+ */
+function getFakeLessons(n = 0, course = null) {
+    const arr = [];
+
+    for (let i = 0; i < n; i++) {
+        const duration = faker.datatype.number({
+            "min": 30,
+            "max": 3600
+        });
+
+        arr.push({
+            name: faker.lorem.words(),
+            description: faker.lorem.paragraphs(),
+            slug: faker.lorem.slug(),
+            position: i + 1,
+            duration,
+            is_free: false,
+            course,
         });
     }
 
@@ -55,7 +85,7 @@ describe("Course Routes", () => {
     const endpoint = "/api/v1/courses";
     let courses;
 
-    beforeEach(() => courses = getFakeData(5));
+    beforeEach(() => courses = getFakeCourses(5));
 
     describe("GET route /courses", () => {
         it("Get no courses", (done) => {
@@ -186,7 +216,7 @@ describe("Course Routes", () => {
         });
 
         describe("Pagination", () => {
-            beforeEach(() => courses = getFakeData(10));
+            beforeEach(() => courses = getFakeCourses(10));
 
             const tests = [
                 { limit: 2, page: 2, expected: 2 },
@@ -296,7 +326,7 @@ describe("Course Routes", () => {
         });
     });
 
-    describe("GET route /courses/:slug", () => {
+    describe("GET route /courses/:courseSlug", () => {
         it("Getting an existing course", (done) => {
             const course = courses[Math.floor(Math.random() * courses.length)];
 
@@ -339,6 +369,89 @@ describe("Course Routes", () => {
                     res.body.message.should.have.string("Not Found");
                     done();
                 });
+        });
+
+        describe("GET route /courses/:courseSlug/:lessonSlug", () => {
+            let course = null;
+            let lessons = null;
+
+            beforeEach(async () => {
+                courses = getFakeCourses(1);
+                course = await Course.create(courses[0]);
+
+                lessons = getFakeLessons(3, course._id);
+                lessons = await Lesson.insertMany(lessons);
+
+                // Update course attaching its lessons
+                course.lessons.push({ $each: lessons.map(l => l._id) });
+                await course.save();
+            });
+
+            it("Getting an existing lesson of a course", (done) => {
+                const lesson = lessons[Math.floor(Math.random() * lessons.length)];
+
+                // requester
+                chai
+                    .request(server)
+                    .get(endpoint + "/" + course.slug + "/" + lesson.slug)
+                    .end((err, res) => {
+                        if (err) done(err);
+                        res.should.have.status(200);
+                        res.body.should.have.property("data");
+                        res.body.data.should.not.be.a("null");
+                        res.body.data.should.be.an("object");
+                        res.body.data.should.include.all.keys(
+                            "name",
+                            "description",
+                            "slug",
+                            "position",
+                            "duration",
+                            "course"
+                        );
+                        res.body.data.slug.should.equal(lesson.slug);
+                        res.body.data.name.should.equal(lesson.name);
+                        res.body.data.description.should.equal(lesson.description);
+                        res.body.data.position.should.equal(lesson.position);
+                        res.body.data.duration.should.equal(lesson.duration);
+                        res.body.data.course.should.equal(lesson.course.toString()).and.equal(course._id.toString());
+                        done();
+                    });
+            });
+
+            it("Getting a non existing lesson of a course", (done) => {
+                const fakeSlug = "a-fake-slug";
+
+                // requester
+                chai
+                    .request(server)
+                    .get(endpoint + "/" + course.slug + "/" + fakeSlug)
+                    .end((err, res) => {
+                        if (err) done(err);
+                        res.should.have.status(404);
+                        res.body.should.not.have.property("data");
+                        res.body.should.have.property("message");
+                        res.body.message.should.have.string("Not Found");
+                        done();
+                    });
+            });
+
+            it("Getting a lesson of a non existing course", (done) => {
+                const lesson = lessons[Math.floor(Math.random() * lessons.length)];
+                const fakeSlug = "a-fake-slug";
+
+                // requester
+                chai
+                    .request(server)
+                    .get(endpoint + "/" + fakeSlug + "/" + lesson.slug)
+                    .end((err, res) => {
+                        if (err) done(err);
+                        res.should.have.status(404);
+                        res.body.should.not.have.property("data");
+                        res.body.should.have.property("message");
+                        res.body.message.should.have.string("Not Found");
+                        done();
+                    });
+            });
         });
     });
 });

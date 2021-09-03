@@ -32,10 +32,12 @@ const CourseController = {
     getLessonOfCourseBySlugs: ((req, res) => {
         Course.findOne({ slug: req.params.courseSlug }, (err, course) => {
             if (err) return res.status(500).send(err.message);
+            if (course === null) return res.status(404).json({ message: "Not Found" });
 
             Lesson.findOne({ slug: req.params.lessonSlug, course: course._id }, (err, lesson) => {
                 if (err) return res.status(500).send(err.message);
-                res.status(200).jsonp(lesson);
+                if (lesson === null) return res.status(404).json({ message: "Not Found" });
+                res.status(200).json({ data: lesson });
             });
         });
     })
