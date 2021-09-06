@@ -192,6 +192,80 @@ describe("Course Routes", () => {
             });
         });
 
+        it("Getting an existing course by one slug", (done) => {
+            Course.insertMany(courses, (err) => {
+                if (err) done(err);
+
+                const course = courses[Math.floor(Math.random() * courses.length)];
+
+                // requester
+                chai
+                    .request(server)
+                    .get(endpoint)
+                    .query({ slug: course.slug })
+                    .end((err, res) => {
+                        if (err) done(err);
+                        res.should.have.status(200);
+                        res.body.should.have.property("data");
+                        res.body.data.should.be.an("array");
+                        res.body.data.should.have.lengthOf(1);
+                        res.body.data[0].should.have.property("slug");
+                        res.body.data[0].slug.should.equal(course.slug);
+                        done();
+                    });
+            });
+        });
+
+        it("Getting two courses by slugs", (done) => {
+            Course.insertMany(courses, (err) => {
+                if (err) done(err);
+
+                const index1 = Math.floor(Math.random() * courses.length);
+                let index2 = Math.floor(Math.random() * courses.length);
+
+                while (index2 === index1) {
+                    index2 = Math.floor(Math.random() * courses.length);
+                }
+
+                const course1 = courses[index1];
+                const course2 = courses[index2];
+
+                // requester
+                chai
+                    .request(server)
+                    .get(endpoint)
+                    .query({ slug: [course1.slug, course2.slug] })
+                    .end((err, res) => {
+                        if (err) done(err);
+                        res.should.have.status(200);
+                        res.body.should.have.property("data");
+                        res.body.data.should.be.an("array");
+                        res.body.data.should.have.lengthOf(2);
+                        res.body.data.every((c) => {
+                            c.should.include.all.keys("slug");
+                            c.slug.should.contain.oneOf([course1.slug, course2.slug]);
+                        });
+                        done();
+                    });
+            });
+        });
+
+        it("Getting a non existing course by slug", (done) => {
+            // requester
+            chai
+                .request(server)
+                .get(endpoint)
+                .query({ slug: "a-fake-slug" })
+                .end((err, res) => {
+                    if (err) done(err);
+                    res.should.have.status(200);
+                    res.body.should.have.property("data");
+                    res.body.data.should.be.an("array");
+                    res.body.data.should.have.lengthOf(0);
+                    done();
+                });
+        });
+
         it("SHOULD get error 422 when passing only a dash without a followed property", (done) => {
             const sort = "-";
 
