@@ -1,6 +1,6 @@
 // Source: https://www.freecodecamp.org/news/how-to-make-input-validation-simple-and-clean-in-your-express-js-app-ea9b5ff5a8a7/
 
-const { query } = require("express-validator");
+const { param, query } = require("express-validator");
 const validation = include("services/validations");
 
 /**
@@ -9,6 +9,13 @@ const validation = include("services/validations");
  * @return {bool}
  */
 const checkDashes = value => !(value.split(" ").some(v => /^\-$/g.test(v)));
+
+exports.validateIdParam = [
+    param("id")
+        .isMongoId() // NOTE: this method applies a 'trimEnd()' on the param.
+        .withMessage("not a valid id"),
+    validation
+];
 
 exports.beforeIndex = [
     query("populate_with").trim(),

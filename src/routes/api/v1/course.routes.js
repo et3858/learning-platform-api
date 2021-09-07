@@ -10,7 +10,11 @@ router
 
 router
     .route("/:id")
-    .get(CourseMiddleware.beforeShow, CourseController.show);
+    .get(
+        CourseMiddleware.validateIdParam,
+        CourseMiddleware.beforeShow,
+        CourseController.show
+    );
 
 // router
 //     .route("/:courseSlug")
