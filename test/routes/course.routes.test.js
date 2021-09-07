@@ -400,17 +400,17 @@ describe("Course Routes", () => {
         });
     });
 
-    describe("GET route /courses/:courseSlug", () => {
+    describe("GET route /courses/:id", () => {
         it("Getting an existing course", (done) => {
-            const course = courses[Math.floor(Math.random() * courses.length)];
-
-            Course.insertMany(courses, (err) => {
+            Course.insertMany(courses, (err, courses) => {
                 if (err) done(err);
+
+                const course = courses[Math.floor(Math.random() * courses.length)];
 
                 // requester
                 chai
                     .request(server)
-                    .get(endpoint + "/" + course.slug)
+                    .get(endpoint + "/" + course._id)
                     .end((err, res) => {
                         if (err) done(err);
                         res.should.have.status(200);
@@ -429,12 +429,12 @@ describe("Course Routes", () => {
         });
 
         it("Getting a non existing course", (done) => {
-            const fakeSlug = "a-fake-slug";
+            const fakeID = "0123456789abcdef01234567";
 
             // requester
             chai
                 .request(server)
-                .get(endpoint + "/" + fakeSlug)
+                .get(endpoint + "/" + fakeID)
                 .end((err, res) => {
                     if (err) done(err);
                     res.should.have.status(404);
@@ -445,7 +445,7 @@ describe("Course Routes", () => {
                 });
         });
 
-        describe("GET route /courses/:courseSlug/:lessonSlug", () => {
+        describe.skip("GET route /courses/:id/:lessonSlug", () => {
             let course = null;
             let lessons = null;
 

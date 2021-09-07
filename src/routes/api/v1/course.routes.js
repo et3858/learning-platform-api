@@ -9,11 +9,15 @@ router
     .get(CourseMiddleware.beforeIndex, CourseController.index);
 
 router
-    .route("/:courseSlug")
-    .get(CourseMiddleware.beforeShow, CourseController.getCourseBySlug);
+    .route("/:id")
+    .get(CourseMiddleware.beforeShow, CourseController.show);
 
-router
-    .route("/:courseSlug/:lessonSlug")
-    .get(CourseController.getLessonOfCourseBySlugs);
+// router
+//     .route("/:courseSlug")
+//     .get(CourseMiddleware.beforeShow, CourseController.getCourseBySlug);
+
+// router
+//     .route("/:courseSlug/:lessonSlug")
+//     .get(CourseController.getLessonOfCourseBySlugs);
 
 module.exports = router;
