@@ -1,5 +1,6 @@
 const Hash = require("../services/hash");
 const mongoose = require("mongoose");
+const mongooseDelete = require("mongoose-delete");
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
@@ -40,6 +41,9 @@ const UserSchema = new Schema({
         default: Date.now
     }
 });
+
+// Soft deleting
+UserSchema.plugin(mongooseDelete, { overrideMethods: "all" });
 
 UserSchema.pre("findOneAndUpdate", function (next) {
     if (typeof this._update !== "undefined") {
