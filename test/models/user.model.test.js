@@ -8,6 +8,21 @@ const expect = chai.expect;
 const dbHandler = require("../db_handler");
 const User = require("../../src/models/user.model");
 
+
+/**
+ * Returns fake data to create or update a user
+ * @return {object}
+ */
+function getUserBody() {
+    return {
+        name: faker.name.findName(), // Rowan Nikolaus
+        username: faker.internet.userName(), // afuentes
+        password: faker.internet.password(), // 123abc
+        email: faker.internet.email() // Kassandra.Haley@erich.biz
+    };
+}
+
+
 // Connect to a new in-memory database before running any tests.
 before(async () => await dbHandler.connect());
 
@@ -21,14 +36,7 @@ after(async () => await dbHandler.closeDatabase());
 describe("User Model", () => {
     let body;
 
-    beforeEach(() => {
-        body = {
-            name: faker.name.findName(), // Rowan Nikolaus
-            username: faker.internet.userName(), // afuentes
-            password: faker.internet.password(), // 123abc
-            email: faker.internet.email() // Kassandra.Haley@erich.biz
-        };
-    });
+    beforeEach(() => body = getUserBody());
 
     it("Get all users", async () => {
         const user = new User(body);
@@ -123,6 +131,63 @@ describe("User Model", () => {
             expect(searchedUser).to.not.be.an("object");
         });
     });
+
+    describe("Soft deleting", () => {
+        it("Soft deleting a user", async () => {
+            const user = new User(body);
+
+            // Save the new user, then remove it
+            await user.save();
+            const userID = user._id;
+            await user.delete();
+
+            const searchedUser = await User.findById({ _id: userID });
+            const deletedUser = await User.findOneDeleted({ _id: userID });
+
+            expect(searchedUser).to.be.a("null");
+            expect(deletedUser).to.be.an("object").and.not.a("null");
+            expect(deletedUser).to.have.property("deleted", true);
+        });
+
+        it("Soft deleting all users", async () => {
+            const user1 = new User(getUserBody());
+            const user2 = new User(getUserBody());
+
+            // Save the new users, then remove them
+            await user1.save();
+            await user2.save();
+            await user1.delete();
+            await user2.delete();
+
+            const users = await User.find({});
+            const deletedUsers = await User.findDeleted({});
+
+            expect(users).to.be.an("array").that.have.lengthOf(0);
+            expect(deletedUsers).to.be.an("array").that.have.lengthOf(2);
+        });
+
+        it("Soft deleting some users", async () => {
+            const user1 = new User(getUserBody());
+            const user2 = new User(getUserBody());
+            const user3 = new User(getUserBody());
+
+            // Save the new users, then remove some of them
+            await user1.save();
+            await user2.save();
+            await user3.save();
+            await user1.delete();
+            await user3.delete();
+
+            const users = await User.find({});
+            const deletedUsers = await User.findDeleted({});
+
+            expect(users).to.be.an("array").that.have.lengthOf(1);
+            expect(users[0]._id.toString()).to.be.equal(user2._id.toString());
+            expect(deletedUsers).to.be.an("array").that.have.lengthOf(2);
+            deletedUsers.forEach((u) => {
+                expect(u._id.toString()).to.have.oneOf([user1._id.toString(), user3._id.toString()]);
+                expect(u).to.have.property("deleted", true);
+            });
+        });
+    });
 });
-
-
