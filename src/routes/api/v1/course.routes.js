@@ -20,6 +20,7 @@ router
     .route("/:id/lessons/:lessonID")
     .get(
         CourseMiddleware.validateIdParam,
+        CourseMiddleware.validateLessonIdParam,
         CourseController.getLessonOfCourse
     );
 

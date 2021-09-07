@@ -17,6 +17,13 @@ exports.validateIdParam = [
     validation
 ];
 
+exports.validateLessonIdParam = [
+    param("lessonID")
+        .isMongoId()
+        .withMessage("not a valid id"),
+    validation
+];
+
 exports.beforeIndex = [
     query("populate_with").trim(),
     query("select_only").trim(),
