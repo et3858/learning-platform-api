@@ -18,6 +18,17 @@ const CourseController = {
             .then(data => res.status(200).jsonp(data))
             .catch(err => res.status(500).send(err.message));
     }),
+    show: ((req, res) => {
+        Course
+            .findById(req.params.id)
+            .select(req.query.select_only)
+            .populate(req.query.populate_with)
+            .exec((err, course) => {
+                if (err) return res.status(500).send(err.message);
+                if (course === null) return res.status(404).json({ message: "Not Found" });
+                res.status(200).json({ data: course });
+            });
+    }),
     getCourseBySlug: ((req, res) => {
         Course
             .findOne({ slug: req.params.courseSlug })
