@@ -445,7 +445,7 @@ describe("Course Routes", () => {
                 });
         });
 
-        describe.skip("GET route /courses/:id/:lessonSlug", () => {
+        describe("GET route /courses/:id/lessons/:lessonID", () => {
             let course = null;
             let lessons = null;
 
@@ -467,7 +467,7 @@ describe("Course Routes", () => {
                 // requester
                 chai
                     .request(server)
-                    .get(endpoint + "/" + course.slug + "/" + lesson.slug)
+                    .get(endpoint + "/" + course._id + "/lessons/" + lesson._id)
                     .end((err, res) => {
                         if (err) done(err);
                         res.should.have.status(200);
@@ -482,8 +482,9 @@ describe("Course Routes", () => {
                             "duration",
                             "course"
                         );
-                        res.body.data.slug.should.equal(lesson.slug);
+                        res.body.data._id.should.equal(lesson._id.toString());
                         res.body.data.name.should.equal(lesson.name);
+                        res.body.data.slug.should.equal(lesson.slug);
                         res.body.data.description.should.equal(lesson.description);
                         res.body.data.position.should.equal(lesson.position);
                         res.body.data.duration.should.equal(lesson.duration);
@@ -493,30 +494,12 @@ describe("Course Routes", () => {
             });
 
             it("Getting a non existing lesson of a course", (done) => {
-                const fakeSlug = "a-fake-slug";
+                const fakeID = "0123456789abcdef01234567";
 
                 // requester
                 chai
                     .request(server)
-                    .get(endpoint + "/" + course.slug + "/" + fakeSlug)
-                    .end((err, res) => {
-                        if (err) done(err);
-                        res.should.have.status(404);
-                        res.body.should.not.have.property("data");
-                        res.body.should.have.property("message");
-                        res.body.message.should.have.string("Not Found");
-                        done();
-                    });
-            });
-
-            it("Getting a lesson of a non existing course", (done) => {
-                const lesson = lessons[Math.floor(Math.random() * lessons.length)];
-                const fakeSlug = "a-fake-slug";
-
-                // requester
-                chai
-                    .request(server)
-                    .get(endpoint + "/" + fakeSlug + "/" + lesson.slug)
+                    .get(endpoint + "/" + course._id + "/lessons/" + fakeID)
                     .end((err, res) => {
                         if (err) done(err);
                         res.should.have.status(404);

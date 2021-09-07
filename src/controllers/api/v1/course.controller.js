@@ -29,23 +29,12 @@ const CourseController = {
                 res.status(200).json({ data: course });
             });
     }),
-    getCourseBySlug: ((req, res) => {
-        Course
-            .findOne({ slug: req.params.courseSlug })
-            .select(req.query.select_only)
-            .populate(req.query.populate_with)
-            .exec((err, course) => {
-                if (err) return res.status(500).send(err.message);
-                if (course === null) return res.status(404).json({ message: "Not Found" });
-                res.status(200).json({ data: course });
-            });
-    }),
-    getLessonOfCourseBySlugs: ((req, res) => {
-        Course.findOne({ slug: req.params.courseSlug }, (err, course) => {
+    getLessonOfCourse: ((req, res) => {
+        Course.findById(req.params.id, (err, course) => {
             if (err) return res.status(500).send(err.message);
             if (course === null) return res.status(404).json({ message: "Not Found" });
 
-            Lesson.findOne({ slug: req.params.lessonSlug, course: course._id }, (err, lesson) => {
+            Lesson.findOne({ _id: req.params.lessonID, course: course._id }, (err, lesson) => {
                 if (err) return res.status(500).send(err.message);
                 if (lesson === null) return res.status(404).json({ message: "Not Found" });
                 res.status(200).json({ data: lesson });

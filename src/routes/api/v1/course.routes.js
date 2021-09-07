@@ -16,12 +16,11 @@ router
         CourseController.show
     );
 
-// router
-//     .route("/:courseSlug")
-//     .get(CourseMiddleware.beforeShow, CourseController.getCourseBySlug);
-
-// router
-//     .route("/:courseSlug/:lessonSlug")
-//     .get(CourseController.getLessonOfCourseBySlugs);
+router
+    .route("/:id/lessons/:lessonID")
+    .get(
+        CourseMiddleware.validateIdParam,
+        CourseController.getLessonOfCourse
+    );
 
 module.exports = router;
