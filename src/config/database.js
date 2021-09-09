@@ -13,10 +13,14 @@ module.exports.connect = async () => {
 
     if (isTestEnv) uri += "-" + process.env.NODE_ENV;
 
-    await mongoose.connect(uri);
-    mongoose.Promise = global.Promise;
-    const db = mongoose.connection;
-    db.on("error", console.error.bind(console, "MongoDB connection error:"));
+    mongoose
+        .connect(uri)
+        .then(() => {
+            mongoose.Promise = global.Promise;
+            const db = mongoose.connection;
+            db.on("error", console.error.bind(console, "MongoDB connection error:"));
+        })
+        .catch(err => console.log(err));
 };
 
 // Disconnect and close connection

@@ -9,13 +9,9 @@ let mongod;
 module.exports.connect = async () => {
     mongod = await MongoMemoryServer.create();
     const uri = mongod.getUri();
-
-    const mongooseOptions = {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        poolSize: 10
-    };
-    await mongoose.connect(uri, mongooseOptions);
+    mongoose.connect(uri, (err) => {
+        if (err) console.log(err);
+    });
 };
 
 // Disconnect and close connection
