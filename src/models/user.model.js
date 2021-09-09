@@ -92,6 +92,7 @@ UserSchema.methods.passwordComparison = function (inputPassword, callback) {
 UserSchema.methods.toJSON = function () {
     const user = this.toObject();
     delete user.password;
+    delete user.deleted;
     return user;
 };
 
