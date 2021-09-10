@@ -1,4 +1,46 @@
 /**
+ * Returns a link to the endpoint of a url with a page query
+ * @param  {int}    page [Defaults to '1']
+ * @return {string}
+ */
+const createUrl = (page = 1) => `http://foo.bar?page=${page}`;
+
+
+/**
+ * Returns the results of the pagination
+ * @param  {int}    limit
+ * @param  {int}    page
+ * @param  {int}    total
+ * @return {object}
+ */
+function getResults(limit, page, total) {
+    const startIndex = (page - 1) * limit + 1;
+    const endIndex = page * limit;
+    const totalPages = Math.ceil(total / limit) || 1;
+    const prevPage = (page > 1) ? page - 1 : null;
+    const nextPage = (endIndex < total) ? page + 1 : null;
+
+    // Add page query to the links of the endpoint
+    const first = createUrl();
+    const last = createUrl(totalPages);
+    const prev = !prevPage ? null : createUrl(prevPage);
+    const next = !nextPage ? null : createUrl(nextPage);
+
+    return {
+        total,
+        per_page: limit,
+        current_page: page,
+        prev_page: prevPage,
+        next_page: nextPage,
+        total_pages: totalPages,
+        from: startIndex,
+        to: endIndex,
+        links: { first, last, prev, next },
+    };
+}
+
+
+/**
  * Get the options for paging the results of a query of a model
  * @param  {int}    limit [Defauls to '0']
  * @param  {int}    page  [Defauls to '1']
@@ -25,44 +67,8 @@ exports.responder = (modelQuery) => {
             modelQuery.model.count(modelQuery._conditions, (err, total) => {
                 if (err) return reject(err);
 
-                const url = "http://foo.bar";
-                const startIndex = (page - 1) * limit + 1;
-                const endIndex = page * limit;
-                const totalPages = Math.ceil(total / limit) || 1;
-
-                let prevPage = null;
-                let nextPage = null;
-                const links = {
-                    first: `${url}?page=1`,
-                    last: `${url}?page=${totalPages}`,
-                    prev: null,
-                    next: null,
-                };
-
-                if (page > 1) {
-                    prevPage = page - 1;
-                    links.prev = `${url}?page=${prevPage}`;
-                }
-
-                if (endIndex < total) {
-                    nextPage = page + 1;
-                    links.next = `${url}?page=${nextPage}`;
-                }
-
-                resolve({
-                    data,
-                    pagination: {
-                        total,
-                        per_page: limit,
-                        current_page: page,
-                        prev_page: prevPage,
-                        next_page: nextPage,
-                        total_pages: totalPages,
-                        from: startIndex,
-                        to: endIndex,
-                        links,
-                    }
-                });
+                const pagination = getResults(limit, page, total);
+                resolve({ data, pagination });
             });
         });
     });
