@@ -1,13 +1,14 @@
 // Set environment to "test" for avoiding clear the database for development or production
 process.env.NODE_ENV = "test";
 
+require("../db_helper");
+
 const faker = require("faker");
 const chai = require("chai");
 const chaiDT = require("chai-datetime");
 const chaiHttp = require("chai-http");
 const chaiSorted = require("chai-sorted");
 chai.should();
-const dbHandler = require("../db_handler");
 const Course = require("../../src/models/course.model");
 const Lesson = require("../../src/models/lesson.model");
 
@@ -69,16 +70,6 @@ function getFakeLessons(n = 0, course = null) {
 
     return arr;
 }
-
-
-// Connect to a new in-memory database before running any tests.
-before(async () => await dbHandler.connect());
-
-// Clear all test data after every test.
-afterEach(async () => await dbHandler.clearDatabase());
-
-// Remove and close the db and server.
-after(async () => await dbHandler.closeDatabase());
 
 
 describe("Course Routes", () => {

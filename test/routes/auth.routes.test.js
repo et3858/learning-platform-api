@@ -1,11 +1,12 @@
 // Set environment to "test" for avoiding clear the database for development or production
 process.env.NODE_ENV = "test";
 
+require("../db_helper");
+
 const faker = require("faker");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 chai.should();
-const dbHandler = require("../db_handler");
 const User = require("../../src/models/user.model");
 
 const server = require("../../src/app");
@@ -13,16 +14,6 @@ chai.use(chaiHttp);
 
 // Help source: https://stackoverflow.com/a/65223900
 // const requester = chai.request(server).keepOpen();
-
-
-// Connect to a new in-memory database before running any tests.
-before(async () => await dbHandler.connect());
-
-// Clear all test data after every test.
-afterEach(async () => await dbHandler.clearDatabase());
-
-// Remove and close the db and server.
-after(async () => await dbHandler.closeDatabase());
 
 
 describe("Auth Routes", () => {
