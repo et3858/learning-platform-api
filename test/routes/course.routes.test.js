@@ -284,16 +284,16 @@ describe("Course Routes", () => {
             beforeEach(() => courses = getFakeCourses(10));
 
             const tests = [
-                { limit: 2, page: 2, expected: 2 },
-                { limit: 3, page: 1, expected: 3 },
-                { limit: 4, page: 3, expected: 2 },
-                { limit: 6, page: 2, expected: 4 },
-                { limit: 7, page: 2, expected: 3 },
-                { limit: 9, page: 2, expected: 1 },
-                { limit: 10, page: 1, expected: 10 },
+                { limit: 2, page: 2, expected: 2, prev_page: 1, next_page: 3 },
+                { limit: 3, page: 1, expected: 3, prev_page: null, next_page: 2 },
+                { limit: 4, page: 3, expected: 2, prev_page: 2, next_page: null },
+                { limit: 6, page: 2, expected: 4, prev_page: 1, next_page: null },
+                { limit: 7, page: 2, expected: 3, prev_page: 1, next_page: null },
+                { limit: 9, page: 2, expected: 1, prev_page: 1, next_page: null },
+                { limit: 10, page: 1, expected: 10, prev_page: null, next_page: null },
             ];
 
-            tests.forEach(({ limit, page, expected }) => {
+            tests.forEach(({ limit, page, expected, prev_page, next_page }) => {
                 it(`Get courses with results limited by ${limit} on the page ${page}`, (done) => {
                     const len = courses.length;
 
@@ -327,18 +327,8 @@ describe("Course Routes", () => {
                                 res.body.pagination.current_page.should.equal(page);
                                 res.body.pagination.total_pages.should.equal(Math.ceil(len / limit));
                                 res.body.pagination.links.should.include.all.keys("first", "last", "prev", "next");
-
-                                if (page > 1) {
-                                    res.body.pagination.prev_page.should.equal(page - 1);
-                                } else {
-                                    (res.body.pagination.prev_page === null).should.be.true;
-                                }
-
-                                if ((page * limit) < len) {
-                                    res.body.pagination.next_page.should.equal(page + 1);
-                                } else {
-                                    (res.body.pagination.next_page === null).should.be.true;
-                                }
+                                (res.body.pagination.prev_page === prev_page).should.be.true;
+                                (res.body.pagination.next_page === next_page).should.be.true;
 
                                 done();
                             });
