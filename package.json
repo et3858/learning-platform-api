@@ -2,6 +2,7 @@
   "name": "mi-proyecto",
   "version": "0.0.0",
   "private": true,
+  "author": "Eduardo Tejada Frost",
   "scripts": {
     "start": "node ./bin/www",
     "serve": "nodemon ./server",
